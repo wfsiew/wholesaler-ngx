@@ -1,0 +1,21 @@
+<div class="container-fluid">
+    <section id="section-1">
+        <div class="row px-3 mt-3">
+            <div class="col-12 col-md-2 text-center ff" style="min-width:8rem;">
+                <div class="cube-icon rounded-circle ml-3">
+                    <label for="up-img">
+                        <i class="pi pi-pencil upload-img-lb"></i>
+                        <input id="up-img" class="upload-img" type="file" (change)="uploadFile($event.target.files)">
+                    </label>
+                    <img class="rounded-circle" [src]="imageUrl">
+                </div>
+            </div>
+            <div class="col-10 col-md-6 text-center text-md-left">
+                <input type="text" class="cust-name-input" pInputText [value]="companyName" readonly placeholder="Company Name">
+            </div>
+            <div class="col-2 col-md-4 text-center text-md-right mt-5">
+                <span class="badge badge-dark p-3" (click)="updateProfile()" *ngIf = "customProfile()">Update Profile</span>
+            </div>
+        </div>
+    </section>
+</div>

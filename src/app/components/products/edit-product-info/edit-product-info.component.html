@@ -1,0 +1,374 @@
+<div class="container-fluid">
+  <p-messages></p-messages>
+  <form [formGroup]="mform">
+    <section id="section-1">
+      <div class="sub-header py-3">
+        <div class="row">
+          <div class="col-1">
+            <span class="d-flex">
+              <div>
+                <span class="back-btn" (click)="onBack()">
+                  <i class="pi pi-angle-left"></i>
+                </span>
+              </div>
+
+              <div class="cube-icon rounded-circle ml-3">
+                <label for="up-img">
+                  <i class="pi pi-pencil upload-img-lb"></i>
+                  <input id="up-img" class="upload-img" type="file" (change)="uploadFile($event.target.files)"
+                    accept="image/*" />
+                </label>
+                <!-- <p-fileUpload #imfile [customUpload]="true" [showUploadButton]="false" [showCancelButton]="false"
+									(change)="uploadFile(imfile)" accept="image/*"></p-fileUpload> -->
+                <img *ngIf="productImage" class="rounded-circle" [src]="imageUrl" />
+              </div>
+            </span>
+          </div>
+          <div class="col-8">
+            <div class="product-title ml-5 d-flex d-inline">
+              <textarea *ngIf="isEdit" maxlength="100" rows="1" [readonly]="isProductNameReadOnly && isEdit"
+                class="product-name ml-4" [ngClass]="{ 'editable-input': !isProductNameReadOnly }" name="product_name"
+                formControlName="product_name"></textarea>
+              <span *ngIf="!isEdit" class="ml-5 autocomplete-container">
+                <div class="ws-form">
+                  <p-autoComplete class="ml-4" [suggestions]="lslookup" (completeMethod)="searchProduct($event)"
+                    (onSelect)="onSelectProduct($event)" field="name"
+                    [placeholder]="'inventory.product-info.product-name' | translate" [maxlength]="100" [size]="100"
+                    name="product_name" formControlName="product_name"></p-autoComplete>
+                </div>
+              </span>
+              <span *ngIf="isProductNameReadOnly && isEdit" (click)="isProductNameReadOnly = false"
+                class="ml-2 edit-icon">
+                <i class="pi pi-pencil"></i>
+              </span>
+              <span *ngIf="!isProductNameReadOnly && isEdit" class="ml-2 edit-icon">
+                <i (click)="isProductNameReadOnly = true" class="pi pi-times"></i>
+              </span>
+            </div>
+          </div>
+          <div class="col-3">
+            <div *ngIf="isEdit || !isAdd" class="float-right">
+              <span class="pr-5 pl-5 stock-lb border border-dark rounded">{{f.stock_balance.value}}</span>
+            </div>
+            <!-- <div *ngIf="isEdit" class="float-right">
+              <div class="cube-icon-par rounded-circle ml-3">
+                <img class="rounded-circle" src="assets/img/cube.png" />
+              </div>
+            </div> -->
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-5 offset-6">
+            <div class="product-barcode">
+              <div class="opt-box d-flex">
+                <span class="d-inline-block">{{ 'inventory.product-info.ws-price' | translate }} </span>
+                <input type="text" [readonly]="(iswsPriceReadOnly && isEdit) || isRead"
+                  [ngClass]="{ 'editable-input': !iswsPriceReadOnly }" name="wholesaler_price"
+                  formControlName="wholesaler_price" class="op-price" placeholder="0.00" />
+                <span class="op-price-rm op-rm-ws-price">{{ 'currency' | translate }}</span>
+                <span *ngIf="iswsPriceReadOnly && isEdit" (click)="iswsPriceReadOnly = false">
+                  <i class="pi pi-pencil"></i>
+                </span>
+                <span *ngIf="!iswsPriceReadOnly && isEdit" (click)="iswsPriceReadOnly = true">
+                  <i class="pi pi-times"></i>
+                </span>
+
+                <span class="ml-auto d-inline-block">{{ 'inventory.product-info.rr-price' | translate }}</span>
+                <input type="text" [readonly]="(isrretailPriceReadOnly && isEdit) || isRead"
+                  [ngClass]="{ 'editable-input': !isrretailPriceReadOnly }" name="recommended_retail_price"
+                  formControlName="recommended_retail_price" class="op-price" placeholder="0.00" />
+                <span class="op-price-rm op-rm-retail-price">{{ 'currency' | translate }}</span>
+                <span *ngIf="isrretailPriceReadOnly && isEdit">
+                  <i (click)="isrretailPriceReadOnly = false" class="pi pi-pencil"></i>
+                </span>
+                <span *ngIf="!isrretailPriceReadOnly && isEdit">
+                  <i (click)="isrretailPriceReadOnly = true" class="pi pi-times"></i>
+                </span>
+
+                <span (click)="setNotForSale()" [ngClass]="{ 'active': f.not_for_sale.value == true }"
+                  class="badge badge-primary px-4 py-3 m-1 cursor-pointer">{{ 'inventory.product-info.not-for-sale' | translate }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="row">
+          <div class="col-5 offset-7">
+            <div class="d-flex">
+              <span (click)="setNotForSale()"
+                [ngClass]="{ 'active': f.not_for_sale.value == true }" 
+                class="badge badge-primary px-4 py-3 m-1 cursor-pointer">Not For Sale</span>
+            </div>
+          </div>
+        </div> -->
+      </div>
+    </section>
+
+    <section id="section-2">
+      <div class="list">
+        <div class="row mx-1">
+          <div class="w-50 p-1">
+            <textarea [maxlength]="255" class="product-des p-2" placeholder="Descriptions ..."
+              style="height:100%; width:100%" [readonly]="isRead" name="description"
+              formControlName="description"></textarea>
+          </div>
+          <div class="w-50">
+            <div *ngIf="lscategory">
+              <p>{{ 'inventory.product-info.category' | translate }}: </p>
+              <span *ngFor="let o of lscategory" (click)="setCategory(o.id, 'clicked')"
+                [ngClass]="{ 'active': category == o.id }"
+                class="badge badge-primary px-4 py-3 m-1 cursor-pointer">{{o.name}}</span>
+            </div>
+
+            <div *ngIf="!isEmpty(lscapacity)" class="pt-2">
+              <p>{{ 'inventory.product-info.capacity' | translate }}: </p>
+              <span *ngFor="let o of lscapacity" (click)="setCapacity(o.id)" [ngClass]="{ 'active': capacity == o.id }"
+                class="badge badge-primary px-4 py-3 m-1 cursor-pointer">{{o.name}}</span>
+            </div>
+            <div *ngIf="isEmpty(lscapacity)" class="pt-2 text-center">
+              {{ 'inventory.product-info.select-category' | translate }}:
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="section-3">
+      <div class="list">
+        <!-- <p class="expired-p">Expired&nbsp;(32)</p> -->
+        <div class="row">
+          <div class="w-75 px-3">
+            <div class="d-flex flex-wrap">
+              <div *ngFor="let o of lsproductvar" class="card text-center vr-card"
+                (click)="loadProductVariantByID(o.id)">
+                <div class="d-flex justify-content-center cursor-pointer">
+                  <img class="product-img" [src]="o.image.src" />
+                </div>
+                <div class="item-card-footer text-center">
+                  <span class="product-total">{{o.quantity.qty}}</span>
+                  <!-- <span class="product-qrcod float-right">
+										<qrcode [qrdata]="prd.barcode" [size]="30" [level]="'M'"></qrcode>
+									</span> -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="w-25">
+            <div class="ui-g-12">
+              <label>{{ 'inventory.product-info.par-level' | translate }}:&nbsp;</label>
+              <div class="ui-inputgroup">
+                <button type="button" pButton icon="pi pi-minus" class="ui-button-danger"
+                  [disabled]="isRead || f.par_level.value == 0" 
+                  (mouseup)="onMouseUpminusParLevelQty($event)"
+                  (mousedown)="onMouseDownminusParLevelQty($event)"></button>
+                <input type="text" pInputText readonly class="text-center txt-par" placeholder="Quantity"
+                  name="par_level" formControlName="par_level" />
+                <button type="button" pButton icon="pi pi-plus" class="ui-button-success" [disabled]="isRead"
+                  (mouseup)="onMouseUpaddParLevelQty($event)"
+                  (mousedown)="onMouseDownaddParLevelQty($event)"></button>
+              </div>
+              <label>
+                {{ 'inventory.product-info.optimum-level' | translate }}:&nbsp;</label>
+              <div class="ui-inputgroup">
+                <button type="button" pButton icon="pi pi-minus" class="ui-button-danger"
+                  [disabled]="isRead || f.optimum_level.value == 0" (click)="minusOptimumQty()"></button>
+                <input type="text" pInputText readonly class="text-center txt-par" name="optimum_level"
+                  formControlName="optimum_level" />
+                <button type="button" pButton icon="pi pi-plus" class="ui-button-success" [disabled]="isRead"
+                  (click)="addOptimumQty()"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </form>
+
+  <section *ngIf="isEdit" id="section-4">
+    <!-- promotion  -->
+    <div class="list ">
+      <div class="d-flex flex-wrap">
+        <form [formGroup]="promoFormArray" (ngSubmit)="saveTest(d.value)" #d="ngForm">
+          <div *ngIf="!isEmpty(lspromotion)" formArrayName="promotions" class="d-flex flex-wrap">
+            <div *ngFor="let o of promotions.controls; let i=index" [ngClass]="isValidFormArray" [formGroupName]="i" class="card mr-1 mt-1"
+              style="min-width: 17rem; min-height: 17rem">
+              <div class="text-right mt-1">
+                <!-- <span (click)="editPromotion(i)">
+                  <span *ngIf="cls == i && isSaved" class="pi pi-check"></span>
+                  <span *ngIf="cls != i" class="pi pi-pencil"></span>
+                </span> -->
+                <!-- <span (click)="editPromotion(i)" class="pi cursor-pointer" [ngClass]="{ 'pi-pencil': !isPromoEdit(i), 'pi-check': isPromoEdit(i) }"></span> -->
+                <span (click)="deletePromotion(i)" class="pi pi-times cursor-pointer px-2"></span>
+                <div class="row p-0 m-0 pt-2">
+                  <div class="w-50 px-1">
+                    <!-- <input type="text" readonly formControlName="from_date" class="product-date text-center" *ngIf="!isPromoEdit(i)" /> -->
+                    <input type="date" formControlName="from_date" class="product-date" (focus)="isTouched()" />
+                    <input type="hidden" formControlName="id" />
+                  </div>
+                  <div class="w-50 px-1">
+                    <!-- <input type="text" readonly formControlName="to_date" class="product-date text-center" *ngIf="!isPromoEdit(i)" /> -->
+                    <input type="date" formControlName="to_date" class="product-date" (focus)="isTouched()" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="card-body">
+                <div class="row p-0 m-0">
+                  <div class="w-50">
+                    <p style="font-size: 22px">{{ 'inventory.product-info.buy' | translate }}</p>
+                  </div>
+                  <div class="w-50">
+                    <!-- <div class="ml-3" *ngIf="!isPromoEdit(i)">
+                      <input type="text" pInputText readonly formControlName="buy_qty" class="text-center txt-qty" />
+                    </div> -->
+                    <div class="ui-inputgroup">
+                      <button type="button" pButton icon="pi pi-minus" class="ui-button-danger"
+                        (click)="minusUpdateBuyPromo(i)"></button>
+                      <input type="text" pInputText readonly formControlName="buy_qty" class="text-center txt-qty"
+                        [(ngModel)]="promoFormArray.value.promotions[i].buy_qty" />
+                      <button type="button" pButton icon="pi pi-plus" class="ui-button-success"
+                        (click)="addUpdateBuyPromo(i)"></button>
+                    </div>
+                  </div>
+                </div>
+                <div class="row p-0 m-0 pt-2">
+                  <div class="w-50">
+                    <p style="font-size:22px;">
+                      {{ 'inventory.product-info.free' | translate }}
+                    </p>
+                  </div>
+                  <div class="w-50">
+                    <!-- <div class="ml-3" *ngIf="!isPromoEdit(i)">
+                      <input type="text" pInputText readonly formControlName="free_qty" class="text-center txt-qty" />
+                    </div> -->
+                    <div class="ui-inputgroup">
+                      <button type="button" pButton icon="pi pi-minus" class="ui-button-danger"
+                        (click)="minusUpdateFreePromo(i)"></button>
+                      <input type="text" pInputText readonly class="text-center txt-qty" formControlName="free_qty"
+                        [(ngModel)]="promoFormArray.value.promotions[i].free_qty" />
+                      <button type="button" pButton icon="pi pi-plus" class="ui-button-success"
+                        (click)="addUpdateFreePromo(i)"></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+        <form [formGroup]='promoForm' #val>
+          <div *ngIf="addNewPromotion" [ngClass]="isValidForm" class="card mr-1 mt-1" style="min-width: 17rem; min-height: 17rem">
+            <div class="text-right mt-1">
+              <span (click)="addNewPromotion = false" class="pi pi-times px-2 cursor-pointer"></span>
+              <div class="row p-0 m-0 pt-2">
+                <div class="w-50 px-1">
+                  <input type="date" formControlName="from_date" class="product-date" />
+                </div>
+                <div class="w-50 px-1">
+                  <input type="date" formControlName="to_date" class="product-date" />
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="row p-0 m-0">
+                <div class="w-50">
+                  <p style="font-size: 22px">{{ 'inventory.product-info.buy' | translate }}</p>
+                </div>
+                <div class="w-50">
+
+                  <div class="ui-inputgroup">
+                    <button type="button" pButton icon="pi pi-minus" class="ui-button-danger"
+                      (click)="minusNewPromoBuyQty()"></button>
+                    <input type="text" pInputText readonly class="text-center txt-qty" formControlName="buy_qty"
+                      [(ngModel)]="promoForm.value.buy_qty" />
+                    <button type="button" pButton icon="pi pi-plus" class="ui-button-success"
+                      (click)="addNewPromoBuyQty()"></button>
+                  </div>
+                </div>
+              </div>
+              <div class="row p-0 m-0 pt-2">
+                <div class="w-50">
+                  <p style="font-size: 22px;">
+                    {{ 'inventory.product-info.free' | translate }}
+                  </p>
+                </div>
+                <div class="w-50">
+                  <div class="ui-inputgroup">
+                    <button type="button" pButton icon="pi pi-minus" class="ui-button-danger"
+                      (click)="minusNewPromoFreeQty()"></button>
+                    <input type="text" pInputText readonly class="text-center txt-qty" formControlName="free_qty"
+                      [(ngModel)]="promoForm.value.free_qty" />
+                    <button type="button" pButton icon="pi pi-plus" class="ui-button-success"
+                      (click)="addNewPromoFreeQty()"></button>
+                  </div>
+
+                  <!-- <input formControlName="free_qty" class="product-date" type="number"
+										placeholder="Free Quantity"> -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <!-- <button (click) = "testMe(val.value)"></button> -->
+
+        <div *ngIf="!addNewPromotion" (click)="addNewPromo()" class="card mr-1 mt-1 new-promo-card cursor-pointer"
+          style="width: 17rem; height: 17rem">
+          <div class="card-body text-center mt-5 pt-5">
+            <p>{{ 'inventory.product-info.new-promo' | translate }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section *ngIf="isEdit" id="section-5">
+    <div *ngIf="lstradeoffer" class="list">
+      <p class="will-expired-p">&nbsp; <strong>{{ 'inventory.product-info.trade-offer' | translate }}</strong> </p>
+      <div class="float-right" style="margin-top: -30px" *ngIf="tradeOffer.pager.total_pages > 1">
+        <p-paginator [rows]="AppConstant.PAGE_SIZE" [totalRecords]="tradeOffer.pager.total_records"
+          [first]="tradeOffer.pager.currentPage" (onPageChange)="onTradeOfferPageChange($event)"></p-paginator>
+      </div>
+      <div class="d-flex flex-wrap mt-4" style="clear: both">
+        <div *ngFor="let o of lstradeoffer" class="card text-center vr-card">
+          <div class="d-flex justify-content-center">
+            <img class="product-img" [src]="getBlankProfilePicture(o.customer.picture)" />
+          </div>
+          <div class="item-card-footer text-center">
+            <div>{{o.customer.company_name}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+ 
+<p-dialog [modal]="true" header="Form Validation" [(visible)]="display">
+  <div class="p-3">
+    {{ 'inventory.product-info.invalid-promo-form' | translate }}
+  </div>
+  <div class="text-center">
+    <!-- <button class="btn-sm mx-2" (click)="confirmSavePromo()">Yes</button> -->
+    <button class="btn-sm mx-2 btn-danger" (click)="display = false">{{ 'ok' | translate }}</button>
+  </div>
+</p-dialog>
+
+<p-confirmDialog header="" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+
+<!-- <button type="button" (click)="showDialog()" pButton icon="pi pi-info-circle" label="Show"></button> -->
+
+<br><br><br><br><br> <br><br> <br><br>
+<p-sidebar [baseZIndex]='1' position='bottom' [modal]='false' blockScroll='true' class="bottom-sidebar text-center"
+  [showCloseIcon]="false" [visible]="true">
+  <div>
+    <!-- isValidPromoForm -->
+    <button [disabled]="invalidData" (click)="onSubmit()" class="ws-save-btn">
+      <span class="mdi mdi-content-save ws-nav-icon" (click)="display = false"></span>
+      {{'save' | translate}}
+    </button>
+
+      <span (click)="onCancel()">
+        <span (click)="display = false" class="mdi mdi-close-circle ws-nav-icon"></span>
+      </span>
+    {{'cancel' | translate}}
+  </div>
+</p-sidebar>

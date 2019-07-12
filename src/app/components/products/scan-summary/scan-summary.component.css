@@ -1,0 +1,170 @@
+.summary-box {
+  margin-top: 12px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  padding-right: 7px;
+  padding-left: 7px;
+  border-radius: 5px;
+  border: 2px solid #FEFEFE;
+  box-shadow: 4px 1px 10px 0px white;
+}
+
+.hr-card {
+  text-align: center;
+  margin-left: 6px;
+  border-radius: 0px; 
+  min-width: 120px;
+}
+
+.hr-scroller {
+  border-radius: 5px;
+  overflow: auto;
+  white-space: nowrap;
+  width: 100%;
+  border: 2px solid #FEFEFE;
+}
+
+.hr-item-img {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+}
+
+.optim-level-no {
+  position: absolute;
+  width: 100%;
+}
+
+.optim-level-no span {
+  color: white;
+  background-color: red;
+  padding-right: 12px;
+  padding-left: 12px;
+  float: right;
+}
+
+.par-level-no {
+  position: absolute;
+  width: 100%;
+  top: 60px;
+}
+
+.par-level-no span {
+  color: white;
+  background-color: #BB3D97;
+  padding: 8px;
+  float: right;
+}
+
+.total-item {
+  margin-top: -10px;
+}
+
+/* product  */
+
+.product-box {
+  margin-top: 12px;
+  padding-bottom: 6px;
+  padding-right: 7px;
+  padding-left: 7px;
+  border-radius: 5px;
+  border: 2px solid #FEFEFE;
+  box-shadow: 4px 1px 10px 0px white;
+}
+
+.flex-product {
+  margin-left: 6px;
+}
+
+.vr-card {
+  min-width: 120px;
+  border-radius: 0px;
+  margin-left: 6px;
+  margin-bottom: 6px;
+}
+
+.product-img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+}
+
+.product-new {
+  position: absolute;
+  width: 100%;
+}
+
+.product-new > span {
+  color: white;
+  background-color: red;
+  padding-right: 12px;
+  padding-left: 12px;
+  float: right;
+}
+
+.item-card-footer {
+  width: 100%;
+  border-top: solid 1px lightgray;
+  /* padding: 6px; */
+}
+
+.product-total {
+  line-height: 2;
+}
+
+.product-qrcod {
+  cursor: pointer;
+  object-fit: cover;
+}
+
+.product-qrcod > * {
+  min-width: 100%;
+  min-height: 100%;
+  object-fit: contain;
+}
+
+.product-title {
+  padding: 6px;
+}
+
+.new-p {
+  margin: 6px;
+  color: white;
+  background-color: red;
+  padding: 2px;
+  padding-right: 12px;
+  padding-left: 12px;
+}
+
+/* wing-fei */
+.btn-menu {
+  background-color: #ffffff !important;
+  border: none !important;
+}
+
+.badge-new {
+  vertical-align: top;
+}
+
+.badge-label {
+  margin-top: 40px;
+}
+
+.img-card {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+}
+
+.scroll-panel {
+  overflow: auto;
+  white-space: nowrap;
+  width: 100%;
+  height: 200px;
+}
+
+.img-qr {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}

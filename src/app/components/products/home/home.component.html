@@ -1,0 +1,99 @@
+<div class="sticky-top sticky-nav pt-3 px-3" style="top:49px;">
+  <p-messages></p-messages>
+  <div class="ui-g">
+    <div class="ui-g-12 ui-md-10 ui-g-nopad">
+      <div class="ui-g d-flex">
+        <div class="ws-form">
+          <span class="ws-icon"><i class="fa fa-search"></i></span>
+          <p-autoComplete [suggestions]="results"  
+            (completeMethod)="search($event)" 
+            (onKeyUp)="onKeyUpSearch($event)"
+            (onSelect)="onSelectSearchTerm($event)"
+            field="name" 
+            [(ngModel)]="searchTerm"
+            [multiple]="false"></p-autoComplete>
+          <!-- <span *ngIf="term" class="ws-icon" (click)="term=''"><i class="fa fa-times ws-clear"></i></span> -->
+        </div>
+          <button pButton type="button" class="px-4 btn-more ml-1 ws-bg-secondary ws-light" icon="fa fa-ellipsis-h"
+          (click)="display = true"></button>
+      </div>
+
+      <div class="ui-g pt-1">
+        <div *ngFor="let o of lscategory">
+          <span (click)="setCategory(o.id)" [ngClass]="{ 'active': isCategorySelected(o.id) }" class="badge ws-outline ws-light px-4 py-3 m-1">{{o.name}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="ui-g-12 ui-md-2">
+      <span (click)="btnAdd()" style="zoom: 6" class="mdi mdi-barcode-scan cursor-pointer"></span>
+    </div>
+  </div>
+ 
+  <samp><span *ngIf="list">{{pager.total_records}}</span> {{ 'inventory.home.result' | translate }} </samp>
+  <hr class="pb-1">
+  <app-loader [isloading]="isloading"></app-loader>
+</div>
+
+<div class="container-fluid bg-faded mt-1">
+  <div class="d-flex flex-wrap">
+    <div *ngFor="let o of list" class="card mr-1 mt-1 card-item">
+      <div class="text-right contax-menu">
+        <button type="button" pButton class="ui-button-secondary btn-menu" icon="pi pi-ellipsis-h"
+          (click)="opencm($event, cm, o)" #xmenu></button>
+      </div>
+      <div class="d-flex justify-content-center">
+        <img [src]="getBlankPicture(o.picture)" class="img" /> 
+      </div>
+      <div class="px-3 my-1">
+        <div class="text-truncate text-center w-auto p-2" [title]="o.name">{{o.name}}</div>
+        <div *ngIf="isOutOfStock(o)" class="text-truncate text-center text-danger w-auto p-2 border border-danger border-left-0 border-right-0" [title]="o.total_qty">out of stock </div>
+        <div *ngIf="isStockBelowParLevel(o)" class="text-truncate text-warning text-center w-auto p-2" [title]="o.total_qty"> 
+          <li style="font-size:18px;" class="pi pi-exclamation-triangle"></li> 
+          {{o.total_qty}}
+        </div>
+        <div *ngIf="o.total_qty != 0 && o.total_qty >= o.par_level" class="text-truncate text-center w-auto p-2" [title]="o.total_qty">{{o.total_qty}}</div>
+      </div>
+    </div>
+    <p-contextMenu #cm appendTo="body" [target]="xmenu" [model]="items2" triggerEvent="click"></p-contextMenu>
+  </div>
+
+  <div class="paginator d-flex justify-content-center" *ngIf="pager.total_pages > 1">
+    <p-paginator 
+      [rows]="AppConstant.PAGE_SIZE" 
+      [totalRecords]="pager.total_records" 
+      [first]="pager.currentPage" 
+      (onPageChange)="onPageChange($event)"></p-paginator>
+  </div>
+</div>
+
+
+
+<p-sidebar class="bottom-sidebar" [showCloseIcon]="false" [(visible)]="display" position="bottom">
+  <div class="ui-g d-flex flex-wrap">
+    <div class="ui-md-10"> 
+      <span *ngFor="let o of SORT_OPTIONS" (click)="onSort(o)">
+        <span class="badge px-1 m-1" [ngClass] = "{ 'ws-bg-secondary': isSortSelected(o) }">
+          <!-- {{o.icon}} -->
+          <i [ngClass]="o.icon" class="ws-nav-icon" aria-hidden="true"></i> 
+          <br>
+          <span>{{o.name}}</span>
+        </span>
+      </span>
+    </div>
+    <!-- <svg-icon src="images/eye.svg" [svgStyle]="{ 'width.px':90 }"></svg-icon> -->
+    <div class="ui-md-1">
+      <a (click)="display = false" class="badge px-1">
+        <!-- <span class="fa fa-times"></span> -->
+        <span class="mdi mdi-close-circle ws-nav-icon"></span>
+        <p>{{'cancel'| translate}}</p>
+      </a>
+    </div>
+
+    <div class="ui-md-1">
+      <a (click)="clear()" style="font-size: 23px;" class="badge ws-outline-primary px-3 py-2 mt-1">
+        {{ 'reset' |translate }}
+      </a>
+    </div>
+  </div>
+</p-sidebar>
+  

@@ -1,0 +1,45 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* GLOBLE VERIABLE */
+/* theme path node_modules/primeng/resources/themes/nova-colored/theme.css */
+/* @import "assets/themes/nova-colored/theme.css"; */
+
+.paginator {
+  line-height: 50px;
+  height: min-content;
+  position: fixed;
+  left: 0;
+  bottom: 5px;
+  width: 100%;
+  height: 50px;
+  line-break: 50px;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.ws-input{
+  height: 45px;
+  width: 100%;
+  color: darkgray;
+  border: 1px solid lightgray;
+  background-color: white;
+  font: 12px;
+  padding: 5px;
+  outline: none;
+  border-radius: 2px;
+  box-shadow: none;
+}
+
+.ws-input:focus {
+  outline: none;
+}
+.ui-dropdown{
+  width: 100%;
+  color: red;
+}
+.ws-nav-icon {
+  cursor: pointer;
+  font-size: 52px;
+}

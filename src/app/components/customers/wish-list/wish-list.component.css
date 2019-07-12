@@ -1,0 +1,24 @@
+.hist-box-list{
+    border: 2px solid lightgray;
+}
+.hist-card{
+    border: 1px solid gray;
+    border-radius: 3px;
+    width: 560px;
+    height: 200px;
+}
+.vr-card {
+    width: 180px;
+    height: 200px;
+    border-radius: 0px;
+    margin-left: 6px;
+    margin-bottom: 6px;
+  }
+  .product-img {
+    width: 180px;
+    height: 150px;
+    object-fit: cover;
+  }
+  .md-icons{
+    zoom: 2;
+  }

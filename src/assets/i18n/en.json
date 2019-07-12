@@ -1,0 +1,111 @@
+{
+  "app-name": "Wholesaler",
+  "ok": "OK",
+  "cancel": "CANCEL",
+  "yes": "YES",
+  "no": "NO",
+  "skip":"Skip",
+  "reset": "Reset",
+  "clear": "Clear",
+  "save": "SAVE",
+  "barcode": "Barcode",
+  "new": "New",
+  "currency": "RM",
+  "form-unsaved": {
+    "title": "",
+    "msg": "You have unsaved changes. Do you really want to discard the changes ?"
+  },
+  "login": {
+    "title": "Login",
+    "username": "Username",
+    "password": "Password",
+    "submit": "Log In",
+    "fail": {
+      "title": "LOGIN FAILED",
+      "msg": "Invalid Username or Password"
+    }
+  },
+  "inventory": {
+    "title": "Inventory",
+    "product": {
+      "title": "Product"
+    },
+    "home":{
+      "total": "Total",
+      "result":"result(s) found"
+    },
+    "scanbarcode": {
+      "result": "Result",
+      "manual-input": "MANUAL INPUT",
+      "done": "DONE",
+      "no-device": "No Device Selected",
+      "quantity": "Quantity",
+      "expiry-date": "Expiry Date",
+      "update-stock": "Update Stock",
+      "scanned-stocks": "Scanned Stocks",
+      "barcode-exist": {
+        "title": "Barcode Exist",
+        "msg": "The barcode already exist. Click OK to proceed, or Cancel to discard the barcode."
+      }
+    },
+    "product-info": {
+      "product-details": "Product Details",
+      "qty-variations": "Quantity Variations",
+      "product-name": "Product Name",
+      "description": "Description",
+      "par-level-qty": "Par Level Qty",
+      "optimum-qty": "Optimum Qty",
+      "par-level": "Par Level",
+      "optimum-level": "Optimum Level",
+      "not-for-sale": "Not For Sale",
+      "category": "Category",
+      "capacity": "Capacity",
+      "buy": "Buy",
+      "free": "Free",
+      "new-promo": "New Promotion",
+      "trade-offer": "Trade-Offer",
+      "invalid-promo-form": "Invalid Promotion form validation",
+      "remaining": "Remaining",
+      "ws-price": "Wholesale price",
+      "rr-price": "Recommended Retail Price",
+      "select-category": "Select Category to select the capacity of the product"
+    },
+    "manual-input": {
+      "title": "Manual Input"
+    },
+    "product-variation": {
+      "title": "Product Variation"
+    },
+    "scanned_summary": {
+      "title": "Summary"
+    },
+    "customer": {
+      "country": "Country",
+      "trade-offer": {
+        "title": "Trade Offer",
+        "total": "Total",
+        "result-found": "result found",
+        "new-trade-offer": "New Trade Offer",
+        "promotion": "Promotion",
+        "new-promotion": "New Promotion",
+        "change": "Change",
+        "buy": "Buy",
+        "free": "Free"
+      },
+      "transaction-hist": {
+        "title": "Transaction History",
+        "invoice": "Invoice"
+      }
+    }
+  },
+  "error": {
+    "timeout": "Request Timeout",
+    "INV_0001": "barcodes exceed 100",
+    "INV_0002": "form validation failed",
+
+    "WS_0001": "product not exist",
+    "WS_0002": "category not exist",
+    "WS_0003": "capacity not exist",
+    "WS_0004": "product variation not exist"
+  }
+}

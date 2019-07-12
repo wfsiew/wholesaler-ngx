@@ -1,0 +1,152 @@
+.img {
+  /* opacity: 0.9; */
+  width: 271px;
+  height: 150px;
+  object-fit: cover;
+  transition: width 1s, height 1s;
+}
+
+.img:hover {
+  /* opacity: 1; */
+  width: 300px;
+  height: 250px;
+  border: solid 1px lightgray;
+  background-color: lightgray;
+  margin-top: -25px;
+  font-weight: bolder;
+  position: absolute;
+}
+
+.card {
+  position: inherit;
+  border-radius: 2px;
+  max-height: 260px;
+  word-wrap:unset;
+}
+
+.sticky-top {
+  background-color: #DEDEDE;
+}
+
+.card-item {
+  width: 271px;
+}
+
+.btn-menu {
+  background-color: #ffffff !important;
+  border: none !important;
+}
+
+.btn-more {
+  font-size: 18px;
+  height: 45px;
+}
+
+.ws-form {
+  width: 90% !important;
+  border: solid white;
+  background-color: white;
+  padding: 5px;
+  height: 45px;
+  border-radius: 8px;
+}
+
+.bar-code {
+  cursor: pointer;
+  width: 132px;
+  height: 120px;
+  margin: auto !important;
+}
+
+.bar-code > img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+}
+
+.search-input {
+  min-width: 70%;
+}
+
+.search-input > input {
+  min-width: 100%;
+}
+
+:host >>> p-autocomplete {
+  min-width: 90%;
+}
+:host >>> .ui-autocomplete {
+  width: 95%;
+}
+:host >>> .ui-inputtext {
+  width: 100%;
+  background-color: white;
+  border: none;
+  outline: none;
+}
+
+.ws-input {
+  font-size: 14px;
+  height: auto;
+  outline: none;
+  width: 94%;
+  border: none;
+  padding: 1%;
+  font-style: unset;
+  max-height: 100%;
+}
+
+@media screen and (max-width: 900px) {
+  .ws-input {
+    max-width: 90%;
+  }
+  :host >>> .ui-autocomplete {
+    width: 90%;
+  }
+}
+
+.ws-clear {
+  cursor: pointer;
+}
+
+.ws-clear:hover {
+  color: red;
+}
+
+.ws-icon {
+  width: 10%;
+  padding-top: 2%;
+  padding-bottom: 2%;
+  padding-left: 1%;
+}
+
+.ws-input:focus {
+  outline: none;
+}
+
+.ws-input:active {
+  outline: none;
+}
+
+.bottom-sidebar > .ui-sidebar {
+  background-color: var(--background)
+}
+
+@media print {
+  #qr {
+    background-color: #ffffff;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 15px;
+    font-size: 14px;
+    line-height: 18px;
+  }
+}
+
+.badge {
+  cursor: pointer;
+}

@@ -1,0 +1,73 @@
+<app-customer-details></app-customer-details>
+<hr>
+<div class="container-fluid">
+  <div class="pt-1 d-inline-flex w-100">
+    <div *ngFor="let o of sortFields">
+      <span (click)="setCategory(o.id)" [ngClass]="{ 'active': isCategorySelected(o.id) }"
+        class="badge ws-outline ws-light px-4 py-3 m-1">{{o.name}}</span>
+    </div>
+    <div class="w-100 text-right">
+      <!-- <span class="badge ws-outline ws-light mt-1 mr-2" (click)="FilterList()">
+        <span style="zoom:3; cursor: pointer;" class="mdi mdi-dots-horizontal"></span>
+      </span> -->
+      <span (click)="FilterList()" class="btn btn-sm float-right ws-bg-primary py-0 px-3">
+					<span class="mdi mdi-dots-horizontal md-icons"></span>
+			</span>
+    </div>
+  </div>
+
+  <div class="w-100 mt-2">{{'inventory.customer.trade-offer.total'| translate}} 45 {{'inventory.customer.trade-offer.result-found'| translate}}. </div>
+  <div *ngIf="wishList" class="hist-box-list mt-3">
+    <div class="w-100 p-1 d-flex flex-wrap">
+      <div *ngFor="let lsw of transList" class="card text-center vr-card" (click)="loadProductVariantByID(o.id)">
+        <div class="d-flex justify-content-center cursor-pointer">
+          <img class="product-img" [src]="lsw.product.picture || assets/img/cube.png" />
+        </div>
+        <div class="item-card-footer text-center">
+          <span class="product-total">{{lsw.product.name}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<p-sidebar class="bottom-sidebar fade show" [showCloseIcon]="false" [modal]='false' [(visible)]="!isShowFilter"
+  position="bottom">
+  <div class="mt-3">
+    <span *ngFor="let o of routerList" (click)="nextTo(o)">
+      <span class="badge px-1 m-1" [ngClass]="{ 'ws-bg-secondary': o.route ==='wish-lisht' }">
+        <!-- {{o.icon}} -->
+        <i [ngClass]="o.icon" class="ws-nav-icon" aria-hidden="true"></i>
+        <br>
+        <span>{{o.name}}</span>
+      </span>
+    </span>
+  </div>
+</p-sidebar>
+
+<p-sidebar class="bottom-sidebar" [showCloseIcon]="false" [(visible)]="isShowFilter" position="bottom">
+  <div class="ui-g d-flex flex-wrap">
+    <div class="ui-md-10">
+      <span *ngFor="let o of SORT_OPTIONS" (click)="(o)">
+        <a class="badge px-1 m-1" [ngClass]="{ 'ws-bg-secondary': isSortSelected(o) }">
+          <i [ngClass]="o.icon" class="ws-nav-icon" aria-hidden="true"></i>
+          <br>
+          <span>{{o.name}}</span>
+        </a>
+      </span>
+    </div>
+    <div class="ui-md-1">
+      <a (click)="FilterList()" class="badge px-1">
+        <span class="mdi mdi-close-circle ws-nav-icon"></span>
+        <p>{{'cancel'| translate}}</p>
+      </a>
+    </div>
+
+    <div class="ui-md-1">
+      <a (click)="clear()" style="font-size: 23px;" class="badge ws-outline-primary px-3 py-2 mt-1">
+        {{ 'reset' |translate }}
+      </a>
+    </div>
+  </div>
+</p-sidebar>

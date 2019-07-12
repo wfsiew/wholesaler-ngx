@@ -1,0 +1,165 @@
+<p-messages></p-messages>
+<section class="mt-2 ml-2">
+  <button type="button" pButton class="ui-button-raised" icon="pi pi-arrow-left" (click)="onBack()"></button>
+
+  <div class="flex-fill d-flex justify-content-center justify-content-center mt-3">
+    <div class="card w-50">
+      <div class="card-header">
+        <select (change)="onDeviceSelectChange($event.target.value)" class="form-control">
+          <option value="" [selected]="!currentDevice">{{'inventory.scanbarcode.no-device' | translate}}</option>
+          <option *ngFor="let device of availableDevices" [value]="device.deviceId"
+            [selected]="currentDevice && device.deviceId === currentDevice.deviceId" [disabled]="allowscan == false">
+            {{device.label}}</option>
+        </select>
+        <div class="results" *ngIf="qrResultString">
+          <small>{{'inventory.scanbarcode.result' | translate}}: &emsp;</small>
+          <strong>{{ qrResultString }}</strong>
+        </div>
+      </div>
+      <div class="card-body scanner-card">
+        <div class="border border-primary rounded">
+          <zxing-scanner class="scanner" #scanner [device]="currentDevice" (scanSuccess)="handleQrCodeResult($event)"
+            [formats]="['EAN_13', 'CODE_128', 'QR_CODE']" [tryHarder]="true"></zxing-scanner>
+        </div>
+        <div class="ui-g">
+          <div class="ui-g-12 ui-md-6 text-center">
+            <button type="button" pButton class="ui-button-raised w-100"
+              [label]="'inventory.scanbarcode.manual-input' | translate" (click)="onManualInput()"
+              [disabled]="!allowscan"></button>
+          </div>
+          <div class="ui-g-12 ui-md-6 text-center">
+            <button type="button" pButton class="ui-button-raised w-100"
+              [label]="'inventory.scanbarcode.done' | translate" (click)="onDone()"
+              [disabled]="isEmpty(barcodes)"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Manual Input bar code no  -->
+  <p-dialog [(visible)]="isVisibleDlg1">
+    <p-header>{{ 'inventory.manual-input.title' | translate }}</p-header>
+    <div class="ui-g">
+      <div class="ui-g-12 ui-md-12">
+        <div class="ui-g-12">
+          <input type="text" pInputText [placeholder]="'barcode' | translate" name="barcode" [(ngModel)]="barcode"
+            maxlength="13" [pattern]="AppConstant.REGPATTERN.BARCODE" required />
+          <button type="button" pButton class="ui-button-secondary" icon="pi pi-times" (click)="clearBarcode()"
+            [ngClass]="{ 'd-none': barcode === '' }"></button>
+          <div *ngIf="isEmpty(barcode)">
+            <small class="text-danger">Barcode is required</small>
+          </div>
+          <div *ngIf="!isValidBarcode()">
+            <small class="text-danger">Invalid Barcode</small>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p-footer>
+      <button type="button" pButton class="ui-button-raised" [label]="'ok' | translate" (click)="onConfirmBarcode()"
+        [disabled]="isEmpty(barcode)"></button>
+      <button type="button" pButton class="ui-button-raised" [label]="'cancel' | translate"
+        (click)="onCancelBarcode()"></button>
+    </p-footer>
+  </p-dialog>
+
+  <!-- Product variation dialog -->
+  <p-dialog [(visible)]="isVisibleDlg2" (onHide)="onDlg2Hide($event)">
+    <p-header>{{ 'inventory.product-variation.title' | translate }}</p-header>
+    <div>
+      <p-fileUpload #imfile [customUpload]="true" [showUploadButton]="false" [showCancelButton]="true"
+        (change)="processFile(imfile)" (uploadHandler)="uploadFile($event)" (onClear)="onClear()"
+        (onRemove)="onRemove($event)" accept="image/*"></p-fileUpload>
+    </div>
+    <div class="d-flex justify-content-center mb-1">
+      <div class="p-2">
+        <div class="img-container border border-primary">
+          <img [src]="selectedFile.src" class="mx-auto d-block img p-1" *ngIf="selectedFile" />
+        </div>
+        <blockquote class="text-center mt-2 mb-2 pt-2 pb-2 blockquote border border-primary">{{barcode}}</blockquote>
+      </div>
+    </div>
+    <div class="ml-3">
+      {{ 'inventory.scanbarcode.quantity' | translate }}:
+      <div class="ui-g text-center">
+        <div class="ui-g-12 ui-md-12">
+          <div class="ui-g-12">
+            <p-selectButton [options]="lsqty" optionLabel="qty" [(ngModel)]="quantity"></p-selectButton>
+          </div>
+          <div class="ui-g-12">
+            <button type="button" pButton class="ui-button-raised" [label]="'save' | translate" (click)="onSubmit()"
+              [disabled]="!selectedFile"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </p-dialog>
+
+
+  <!-- Expiry dialog  -->
+  <p-dialog [(visible)]="isVisibleDlg3">
+    <p-header>{{ 'inventory.scanbarcode.expiry-date' | translate }}</p-header>
+    <div class="ui-g">
+      <div class="ui-g-12 ui-md-12">
+        <div class="ui-g-12">
+          <p-calendar [placeholder]="'inventory.scanbarcode.expiry-date' | translate" [(ngModel)]="expdate"
+            dateFormat="dd-mm-yy" appendTo="body"></p-calendar>
+          <button type="button" pButton class="ui-button-secondary" icon="pi pi-times" (click)="onResetExpiryDate()"
+            [ngClass]="{ 'd-none': expdate == null }"></button>
+        </div>
+      </div>
+    </div>
+    <p-footer>
+      <button type="button" pButton class="ui-button-raised" [label]="'ok' | translate"
+        (click)="onConfirmExpiryDate()"></button>
+      <button type="button" pButton class="ui-button-raised" [label]="'skip' | translate"
+        (click)="onCancelExpiryDate()"></button>
+    </p-footer>
+  </p-dialog>
+
+  <!-- <p-confirmDialog [header]="'inventory.scanbarcode.barcode-exist.title' | translate" icon="pi pi-exclamation-triangle">
+  </p-confirmDialog> -->
+
+  <p-dialog [(visible)]="isVisibleDlg4">
+    <!-- Exist scanned Product -->
+    <p-header>{{ 'inventory.scanbarcode.update-stock' | translate }}</p-header>
+    <div style="width:300px;" *ngIf = "productInfo.result">
+      <div class="ui-g">
+        <div class="ui-g-8">
+          <strong>{{productInfo.product.name}}</strong>
+        </div>
+        <div class="ui-g-4">
+          <div>
+            <span class="badge-danger px-2 py-1 rounded-circle" style="position: absolute; margin-left: 49px;">
+              {{productInfo.product.variant.content_qty}}
+            </span>
+            <img style="width: 80px; height: 70px; margin-top: -12px;" [src]="AppConstant.ASSET.CUBE">
+          </div>
+        </div>
+
+        <div class="ui-g-6">{{'inventory.scanbarcode.scanned-stocks'| translate}}</div>
+        <div class="ui-g-2">{{scanCount}}</div>
+        <div class="ui-g-4">+1</div>
+      </div>
+
+    </div>
+  
+    <p-footer>
+      <div class="ui-g">
+        <div class="ui-g-9">
+          <button (click)="confirmExistBardCode()" type="button" style="width: 100%; padding: 9px;"
+            class="btn btn-primary btn-block m-0">{{'ok'| translate}}</button>
+        </div>
+        <div class="ui-g-3">
+          <button (click)="cancelExistBardCode()" type="button" class="btn btn-outline-primary py-0 bx-3 m-0"><span
+              class="mdi mdi-delete ws-icon"></span></button>
+        </div>
+      </div>
+    </p-footer>
+
+  </p-dialog>
+
+
+  <p-toast position="top-right" key="toast"></p-toast>
+</section>

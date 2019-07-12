@@ -1,0 +1,68 @@
+<div class="container-fluid">
+    <section id="section-1">
+        <div class="gredain-sub-header py-3">
+            <div class="row">
+                <div class="col-1">
+                    <span class="d-flex">
+                        <div>
+                            <span class="back-btn" (click)="back()">
+                                <i class="pi pi-angle-left"></i>
+                            </span>
+                        </div>
+
+                        <div class="cube-icon rounded-circle ml-3">
+                            <img class="rounded-circle" [src]="product_image">
+                        </div>
+                    </span>
+                </div>
+                <div class="col-6">
+                    <div class="product-title ml-5 d-flex" style="display: inline;">
+                        <span style="font-size:23px; line-height: 3">
+                            <div class="ws-form">
+                                <div>{{product.name}}</div>
+                            </div>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-5">
+                    <div class="float-right">
+                        <div class="cube-icon-par rounded-circle ml-3">
+                            <img class="rounded-circle" src="assets/img/cube.png">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="product-bar-cade mt-5">
+                        <div class="opt-box d-flex">
+                            <span>RM</span>
+                            <span class="op-price" >{{product.recommended_retail_price}}</span>
+                            &nbsp; &nbsp;
+                            <span>RM</span>
+                            <span readonly class="op-price">{{product.wholesaler_price}}</span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="section-2">
+        <div class="row mt-2 variant-box">
+            <div class="d-flex flex-wrap">
+                <div *ngFor="let vard of variantsList" class="card text-center vr-card"
+                    (click)="getProductVariant(prd.id)">
+                    <div class="d-flex justify-content-center">
+                        <img *ngIf="vard.picture" class="product-img" [src]="vard.picture">
+                        <img *ngIf="!vard.picture" class="product-img" [src]="variant_image">
+                    </div>
+                    <div class="item-card-footer text-center">
+                        <span class="product-total">{{vard.content_qty}}</span>
+                        <span class="product-qrcod float-right">
+                            <qrcode [qrdata]="vard.barcode" [size]="30" [level]="'M'"></qrcode>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

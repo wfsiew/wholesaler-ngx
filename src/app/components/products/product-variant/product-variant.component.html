@@ -1,0 +1,83 @@
+<div class="container-fluid">
+  <p-messages></p-messages>
+  <div class="sub-header py-3">
+    <div class="row">
+      <div class="col-2">
+        <span class="d-flex">
+          <div>
+            <span class="back-btn" (click)="onBack()">
+              <i class="pi pi-angle-left"></i>
+            </span>
+          </div>
+
+          <div class="cube-icon rounded-circle ml-3">
+            <img class="rounded-circle" [src]="variant.picture" />
+          </div>
+        </span>
+      </div>
+      <div class="col-7">
+        <div class="product-title ml-5 mt-3">
+          <span>
+            <h4>{{product.name}}</h4>
+          </span>
+        </div>
+      </div>
+      <div class="col-3">
+        <div class="cube-optimum-level float-right">
+          <span class="opt-box">
+            <span class="badge optim-no badge-danger rounded-circle p-2">{{variant.qty}}</span>
+            <img class="rounded-circle" [src]="AppConstant.ASSET.CUBE" />
+          </span>
+        </div>
+        <br>
+        <div class="product-barcode mt-5">
+          <!-- <img src="assets/img/bar-code.png" /> -->
+          <ngx-barcode [bc-value]="variant.barcode" [bc-display-value]="true" [bc-height]="53" [bc-font]="arial"></ngx-barcode>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="expired-list">
+    <p class="expired-p ml-2">Expired&emsp;({{total_expired}})</p>
+    <div class="d-flex flex-wrap">
+      <div *ngFor="let o of list_expired" class="card text-center vr-card">
+        <div class="d-flex justify-content-center">
+          <qrcode [qrdata]="o.qr_code" [size]="110" [level]="'M'" class="m-1"></qrcode>
+        </div>
+        <div class="item-card-footer text-center">
+          <span class="product-total">{{o.qty}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="will-expire-list">
+    <p class="will-expired-p ml-2">{{total_expires}} stocks expiring soon in:</p>
+    <div class="p-2">
+      <span (click)="setMonth(1)"
+        [ngClass]="{ 'active': month == '1' }" 
+        class="badge badge-primary px-4 py-3 m-1 cursor-pointer">1 month</span>
+      <span (click)="setMonth(3)"
+        [ngClass]="{ 'active': month == '3' }" 
+        class="badge badge-primary px-4 py-3 m-1 cursor-pointer">3 months</span>
+      <span (click)="setMonth(6)"
+        [ngClass]="{ 'active': month == '6' }" 
+        class="badge badge-primary px-4 py-3 m-1 cursor-pointer">6 months</span>
+      <span (click)="setMonth(0)"
+        [ngClass]="{ 'active': month == '' }" 
+        class="badge badge-primary px-4 py-3 m-1 cursor-pointer">No Epxiry</span>
+    </div>
+    <div class="d-flex flex-wrap">
+      <div *ngFor="let o of list_expires" class="card text-center vr-card">
+        <div class="d-flex justify-content-center">
+          <qrcode [qrdata]="o.qr_code" [size]="110" [level]="'M'" class="m-1"></qrcode>
+        </div>
+        <div class="item-card-footer text-center">
+          <div class="product-total">{{o.qty}}</div>
+          <div class="product-qrcod">{{o.remaining_days}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

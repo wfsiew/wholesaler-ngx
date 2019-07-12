@@ -1,0 +1,67 @@
+<!-- <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
+<div class="sticky-top sticky-nav pt-3 px-3" style="top:49px;">
+  <p-messages></p-messages>
+  <div class="ui-g">
+    <div class="ui-g-12 ui-md-10 ui-g-nopad">
+      <div class="ui-g d-flex">
+        <div class="ws-form">
+          <span class="ws-icon"><i class="fa fa-search"></i></span>
+          <p-autoComplete [suggestions]="results"  
+            (completeMethod)="search($event)" 
+            (onKeyUp)="onKeyUpSearch($event)"
+            (onSelect)="onSelectSearchTerm($event)"
+            field="company_name" 
+            [(ngModel)]="searchTerm"
+            [multiple]="false"></p-autoComplete>
+        </div>
+      </div>
+
+      <div class="ui-g pt-1">
+          <span class="badge px-4 py-3 m-1 ws-outline-primary" (click)="tradOffer()" [ngClass]="{ 'active': isSelected }">{{'inventory.customer.trade-offer.title' |translate}}</span>
+      </div>
+    </div>
+
+    <div class="ui-g-12 ui-md-2">
+      <div class="add-new-user">
+        <span class="mdi mdi-account-plus add-cus-icon"></span>
+      </div>
+    </div>
+  </div>
+ 
+  <samp><span *ngIf="list">{{pager.total_records}}</span> {{ 'inventory.home.result' | translate }} </samp> 
+  <hr class="pb-1">
+  <app-loader [isloading]="isloading"></app-loader>
+</div>
+
+<br>
+<div class="container-fluid bg-faded mt-3">
+  <div class="d-flex flex-wrap">
+    <div *ngFor="let o of list" class="card mr-1 mt-1 card-item">
+      <div class="text-right contax-menu">
+        <button type="button" pButton class="ui-button-secondary btn-menu" icon="pi pi-ellipsis-h"
+          (click)="opencm($event, cm, o)" #xmenu></button>
+      </div>
+      <div class="d-flex justify-content-center">
+        <img *ngIf = "defaultImage" [src]="getBlankPicture(o.picture)" class="img" />
+      </div>
+      <div class="px-3 my-1">
+        <div class="text-truncate text-center w-auto p-2" [title]="o.name">{{o.company_name}}</div>
+        <div *ngIf = "o.trade_offer" class="text-truncate text-center w-auto p-2 text-success"> 
+          <span class="badge-success py-2 px-4">{{ 'inventory.customer.trade-offer.title' | translate }} 
+          &nbsp;{{o.trade_offer_count}} </span></div>
+      </div>
+    </div> 
+    <p-contextMenu #cm appendTo="body" [target]="xmenu" [model]="items2" triggerEvent="click"></p-contextMenu>
+  </div>
+</div>
+
+<div class="paginator d-flex justify-content-center" *ngIf="pager.total_pages > 1">
+  <p-paginator 
+    [rows]="AppConstant.PAGE_SIZE" 
+    [totalRecords]="pager.total_records" 
+    [first]="pager.currentPage" 
+    (onPageChange)="onPageChange($event)"></p-paginator>
+</div>
+
+
+ 

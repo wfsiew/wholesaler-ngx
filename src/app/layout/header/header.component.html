@@ -1,0 +1,19 @@
+<div class="sticky-top sticky-nav">
+  <p-toolbar class="ws-bg-primary">
+    <div class="ui-toolbar-group-left pt-1">
+      <span class="font-weight-bold ml-2 ws-light">{{ 'app-name' | translate }}</span>
+    </div>
+    <div class="ui-toolbar-group-right">
+      <!-- <button pButton type="button" class="nav-icons mr-1 btn-header" icon="pi pi-search"></button>
+      <button pButton type="button" class="nav-icons mr-1 btn-header" icon="pi pi-cog"></button> -->
+      <button pButton type="button" class="nav-icons mr-1 btn-header" icon="pi pi-bell"></button>
+      <button (click)="logout()" pButton type="button" class="nav-icons m-0 btn-header" icon="pi pi-user"></button>
+    </div>
+    <div class="font-weight-bold title text-white">{{ 'inventory.title' | translate }}</div>
+  </p-toolbar>
+
+</div>
+<!-- <p-sidebar [appendTo]='navbar' [(visible)]="display" position="left" [autoZIndex]="false" [baseZIndex]="2000"
+  [style]="{width:'40em', top: '50px'}">
+  Content
+</p-sidebar> -->

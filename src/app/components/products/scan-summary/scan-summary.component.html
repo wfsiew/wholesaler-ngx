@@ -1,0 +1,52 @@
+<div class="container-fluid">
+  <p-messages></p-messages>
+  <div class="summary-box">
+    <h2>{{ 'inventory.scanned_summary.title' | translate }}</h2>
+    <div *ngIf="data">
+      You have added the below &nbsp;<span>{{data.scanned_summary.total_qty}}</span>&nbsp; product stocks. <button (click)="downloadQRCodeAll()" class="badge badge-primary px-3 py-2">Print All QR Codes</button> or click&nbsp;<button class="btn btn-link text-lowercase" (click)="onClickHere()">here</button>&nbsp;to continue.
+    </div><br>
+
+    <div *ngIf="data">
+      Product: <span
+        class="badge px-2 py-1 new-p">{{ 'new' | translate }}</span>&nbsp;<span>{{data.scanned_summary.new_product.total_qty}}</span>&nbsp;
+    </div>
+
+    <div class="d-flex flex-wrap p-2">
+      <div class="card mr-2" *ngFor="let o of data.scanned_summary.variations">
+        <div class="d-flex justify-content-center">
+          <img class="hr-item-img" [src]="AppConstant.ASSET.CUBE" />
+        </div>
+        <div class="optim-level-no">
+          <span class="badge px-2 py-1">{{ 'new' | translate }} </span>
+        </div>
+        <div class="par-level-no">
+          <span class="badge rounded-circle">{{o.content_qty}}</span>
+        </div>
+        <div class="text-truncate text-center w-auto pb-2 total-item">{{o.total_qty}}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="product-box" *ngFor="let o of data.scanned_products">
+    <div class="product-title">
+      <span class="font-weight-bold text-muted">{{o.product.name}}</span> <span *ngIf="o.new_product" class="new-p badge px-2 py-1">{{ 'new' | translate }}</span>
+      <span>&nbsp;({{o.total_qty}})&nbsp;</span>
+    </div>
+    <div class="d-flex flex-wrap">
+      <div class="card text-center vr-card" *ngFor="let x of o.scanned_batches">
+        <div class="d-flex justify-content-center">
+          <img class="product-img" [src]="x.product_variation.picture" />
+        </div>
+        <div *ngIf="x.product_variation.new_variation" class="product-new">
+          <span class="badge px-2 py-1">{{ 'new' | translate }}</span>
+        </div>
+        <div class="item-card-footer text-center">
+          <span class="product-total">{{x.total_qty}}</span>
+          <span (click)="downloadQRCode(x.id)" class="product-qrcod float-right">
+            <qrcode [qrdata]="x.product_variation.qr_code" [size]="30" [level]="'M'"></qrcode>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,84 @@
+<app-customer-details></app-customer-details>
+<hr>
+<div class="container-fluid">
+	<div class="pt-1 d-inline-flex w-100">
+		<div *ngFor="let o of sortFields">
+			<span (click)="setCategory(o.id)" [ngClass]="{ 'active': isCategorySelected(o.id) }"
+				class="badge ws-outline ws-light px-4 py-3 m-1">{{o.name}}</span>
+		</div>
+		<div class="w-100 text-right">
+			<span (click)="FilterList()" class="btn btn-sm float-right ws-bg-primary py-0 px-3">
+					<span class="mdi mdi-dots-horizontal md-icons"></span>
+			</span>
+		</div>
+	</div>
+	<div class="w-100 mt-2">{{'inventory.customer.trade-offer.total'| translate}} 45 {{'inventory.customer.trade-offer.result-found'| translate}}. </div>
+	<div *ngIf = "transList" class="hist-box-list mt-3 pt-2 pl-2">
+		<span>{{transList.status}}&nbsp;&nbsp;({{transList.created_date}})</span>
+		<div class="w-100 p-1 d-inline-flex">
+			<div class="w-25 ml-3">
+				<span style="position: absolute; margin-top: 8px">RM</span>
+				<span style="font-size:58px; padding-left: 22px">{{transList.total_price}}</span><br>
+				<br><br><br>
+				<button class="btn btn-sm px-5 py-2 ml-5 ws-bg-primary">
+						{{'inventory.customer.transaction-hist.invoice'| translate}}</button>
+			</div>
+			<div class="w-75 d-flex flex-wrap m-0 p-0">
+				<div *ngFor="let o of transList.order_items" class="card text-center vr-card" (click)="loadProductVariantByID(o.id)">
+					<div class="d-flex justify-content-center cursor-pointer">
+						<img class="product-img" [src]="o.product.picture" />
+					</div>
+					<div class="item-card-footer pt-3 text-center">
+						<span class="product-total">{{o.ordered_quantity}}</span>
+					</div>
+				</div>
+				&nbsp;
+				<div *ngIf="transList.length>4">
+					<button class="btn btn-sm px-3 pt-2 ws-bg-primary" style="margin-top:150px!important;">more</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<p-sidebar class="bottom-sidebar" [showCloseIcon]="false" [modal]='false' [(visible)]="!isShowFilter" position="bottom">
+	<div class="mt-3">
+		<span *ngFor="let o of routeList" (click)="nextTo(o)">
+			<span class="badge px-1 m-1" [ngClass]="{ 'ws-bg-secondary': o.route ==='tras-history'}">
+				<!-- {{o.icon}} -->
+				<i [ngClass]="o.icon" class="ws-nav-icon" aria-hidden="true"></i>
+				<br>
+				<span>{{o.name}}</span>
+			</span>
+		</span>
+	</div>
+</p-sidebar>
+
+<p-sidebar class="bottom-sidebar" [showCloseIcon]="false" [(visible)]="isShowFilter" position="bottom">
+	<div class="ui-g d-flex flex-wrap">
+		<div class="ui-md-10">
+			<span *ngFor="let o of SORT_OPTIONS" (click)="onSort(o)">
+				<a class="badge px-1 m-1" [ngClass]="{ 'ws-bg-secondary': isSortSelected(o) }">
+					<!-- {{o.icon}} -->
+					<i [ngClass]="o.icon" class="ws-nav-icon" aria-hidden="true"></i>
+					<br>
+					<span>{{o.name}}</span>
+				</a>
+			</span>
+		</div>
+		<!-- <svg-icon src="images/eye.svg" [svgStyle]="{ 'width.px':90 }"></svg-icon> -->
+		<div class="ui-md-1">
+			<a (click)="FilterList()" class="badge px-1">
+				<!-- <span class="fa fa-times"></span> -->
+				<span class="mdi mdi-close-circle ws-nav-icon"></span>
+				<p>{{'cancel'| translate}}</p>
+			</a>
+		</div>
+
+		<div class="ui-md-1">
+			<a (click)="clear()" style="font-size: 23px;" class="badge ws-outline-primary px-3 py-2 mt-1">
+				{{ 'reset' |translate }}
+			</a>
+		</div>
+	</div>
+</p-sidebar>

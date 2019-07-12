@@ -1,0 +1,56 @@
+.offer-box-list{
+    border: 2px solid lightgray;
+}
+.trade-offer-card{
+    border-radius: 3px;
+    width: 560px;
+    height: 200px;
+}
+.upload-img-lb{
+    position: absolute;
+    font-size: 32px;
+    width: 60px;
+    height: 40px;
+    margin-left: 200px;
+    margin-top: 15px;
+}
+.md-icons{
+    zoom: 2;
+}
+.trd-img{
+    width: 250px;
+    height: 194px;
+    border: 1px solid gray;
+    border-radius: 2px;
+}
+.add-promo-box{
+    margin: auto;
+}
+
+.change-promo{
+    min-width: 100%;
+    height: 20%;
+}
+.change-promo input{
+    width: 75%;
+}
+.promo{
+    width: 405px;
+    height: 75%;
+    border: 2px black dashed;
+}
+
+.md-icon{
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.md-icon:hover{
+    color: grey;
+}
+.selected-list{
+    background-color: lightgray;
+}
+.check-price-btn{
+    width: 375px;
+}
