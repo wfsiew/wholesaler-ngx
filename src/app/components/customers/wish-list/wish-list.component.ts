@@ -139,4 +139,5 @@ export class WishListComponent implements OnInit {
   refresh() {
     console.log(this.lsSelectedSort);
   }
+  clear() {}
 }

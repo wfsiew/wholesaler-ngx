@@ -58,7 +58,7 @@ export class ScanSummaryComponent implements OnInit {
   }
 
   onClickHere() {
-    this.router.navigate(['products']);
+    this.router.navigate(['/products/scan2dbarcode']);
   }
 
   downloadQRCode(id) {

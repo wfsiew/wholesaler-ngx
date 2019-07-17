@@ -269,12 +269,12 @@ export class HomeComponent implements OnInit, OnDestroy {
           this.editProductInfo(o.id);
         }
       },
-      {
-        label: 'View Product', command: (event) => {
-          this.viewProductInfo();
-        }
-      },
-      { label: 'List 2 (csv)', command: (event) => { } }
+      // {
+      //   label: 'View Product', command: (event) => {
+      //     this.viewProductInfo();
+      //   }
+      // },
+      // { label: 'List 2 (csv)', command: (event) => { } }
     ];
   }
 

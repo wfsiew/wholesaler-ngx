@@ -17,7 +17,7 @@
 			<span class="mdi mdi-close"></span>
 		</div>
 		<div class="trade-offer-card d-flex">
-			<div (click)="openDialog('','')">
+			<div [ngClass]="{'invalid-promo':inValidProductId}" (click)="openDialog('','')">
 				<i class="pi pi-search upload-img-lb"></i>
 				<img class="trd-img" [src]="newPrdImage">
 			</div>
@@ -26,9 +26,9 @@
 					<form [formGroup]='newPromoForm' #frm="ngForm">
 						<div class="mx-2">
 							<div class="change-promo d-flex">
-								<input type="text" pInputText [pattern]="AppConstant.REGPATTERN.PRICE"
-									class="check-price-btn" placeholder="Offered Price" #price>
-								<button (click)="addNewPrice(price.value)"
+								<input type="text" pInputText [pattern]="AppConstant.REGPATTERN.PRICE" class="check-price-btn"
+									placeholder="Offered Price" #price>
+								<button [disabled]="isValidPrice(price)" (click)="addNewPrice(price.value)"
 									class="ui-inputgroup-addon">{{'inventory.customer.trade-offer.change'| translate}}</button>
 							</div>
 							<div class="promo mt-1 text-center p-5">
@@ -42,19 +42,19 @@
 	</div>
 
 	<div *ngFor="let trd of lstradeOff; let idx =index" class="offer-box-list p-2 my-1">
-		<div (click)="deleteTradeOffer(trd.id)" class="text-right">
-			<span class="mdi mdi-close"></span>
+		<div class="text-right">
+			<span (click)="deleteTradeOffer(trd.id)" class="mdi mdi-close"></span>
 		</div>
 		<div>
 			<div class="ui-g d-flex-in">
 				<div class="product-img">
 					<img class="trd-img" [src]="trd.picture">
 				</div>
-				<div class="ui-12">
+				<div class="ui-12 mt-2 mt-lg-0">
 					<div class="ui-inputgroup ml-2">
 						<input type="text" pInputText class="check-price-btn" placeholder="Offered Price" #price
 							[value]="trd.offered_price">
-						<button (click)="changePrice(price.value, trd, i)"
+						<button [disabled]="isValidPrice(price)" (click)="changePrice(price.value, trd, i)"
 							class="ui-inputgroup-addon">{{'inventory.customer.trade-offer.change'| translate}}</button>
 					</div>
 					<div class="d-flex flex-wrap">
@@ -66,32 +66,33 @@
 										<p-card class="ml-2">
 											<div class="mt-1">
 												<div class="text-right">
-													<span *ngIf="edit(i, idx)"
-														(click)="UpdateNewPromo(frm.value, trd, i, idx)"
+													<span *ngIf="edit(i, idx)" (click)="UpdateNewPromo(frm.value, trd, i, idx)"
 														class="mdi mdi-check" ngClass="mr-1 md-icon"></span>
 
-													<span *ngIf="!edit(i, idx)" (click)="editPromo(i, idx)"
-														class="mdi mdi-pencil" ngClass="mr-1 md-icon"></span>
+													<span *ngIf="!edit(i, idx)" (click)="editPromo(i, idx)" class="mdi mdi-pencil"
+														ngClass="mr-1 md-icon"></span>
 
-													<span (click)="deletePromo(trd, o, i)" class="mdi mdi-close"
-														ngClass="ml-1 md-icon"></span>
+													<span (click)="deletePromo(trd, o, i)" class="mdi mdi-close" ngClass="ml-1 md-icon"></span>
 												</div>
 												<div class="promo-dates d-flex">
-													<input [readonly]="!edit(i, idx)" formControlName="from_date"
-														[value]="o.from_date" class="mx-2 ws-input" type="date">
-													<input [readonly]="!edit(i, idx)" formControlName="to_date"
-														[value]="o.to_date" class="mx-2 ws-input" type="date">
-												</div>
+													<input [readonly]="!edit(i, idx)" [min]="dateFromLess(i)| date:'yyyy-MM-dd'" formControlName="from_date"
+														[value]="o.from_date" [ngClass]="isValidDate(promotions.controls[i].value.from_date)"
+														class="mx-2 ws-input" type="date">
 
+													<input [readonly]="!edit(i, idx)" formControlName="to_date" [min]="dateToLess(i) | date:'yyyy-MM-dd'"
+														[value]="o.to_date" [ngClass]="isValidDate(promotions.controls[i].value.to_date)"
+														class="mx-2 ws-input" type="date">
+												</div>
+												<!-- ff[i].to_date -->
 												<div class="mt-1 d-flex">
-													<span>{{'inventory.customer.trade-offer.buy'| translate}}</span><input
-														[readonly]="!edit(i, idx)" formControlName="buy_qty"
-														[value]="o.buy_qty" class="mx-2 ws-input" type="text"
+													<span>{{'inventory.customer.trade-offer.buy'| translate}}</span>
+													<input [readonly]="!edit(i, idx)" [ngClass]="isValidQty(f.controls[i].value.buy_qty)"
+														formControlName="buy_qty" [value]="o.buy_qty" class="mx-2 ws-input" type="text"
 														placeholder="QTY">
-													<br>
-													<span>{{'inventory.customer.trade-offer.free'| translate}}</span><input
-														[readonly]="!edit(i, idx)" formControlName="free_qty"
-														[value]="o.free_qty" class="mx-2 ws-input" type="text"
+													<br [class]="ff">
+													<span>{{'inventory.customer.trade-offer.free'| translate}}</span>
+													<input [readonly]="!edit(i, idx)" [ngClass]="isValidQty(f.controls[i].value.free_qty)"
+														formControlName="free_qty" [value]="o.free_qty" class="mx-2 ws-input" type="text"
 														placeholder="QTY">
 												</div>
 											</div>
@@ -106,26 +107,28 @@
 									<div class="text-right">
 										<span (click)="saveNewPromo(newPromoForm.value, trd, idx)" class="mdi mdi-check"
 											ngClass="mr-1 md-icon"></span>
-										<span (click)="deletePromo(trd, o)" class="mdi mdi-close"
-											ngClass="ml-1 md-icon"></span>
+										<span (click)="deletePromo(trd, o)" class="mdi mdi-close" ngClass="ml-1 md-icon"></span>
 									</div>
 									<div class="promo-dates d-flex">
-										<input formControlName="from_date" class="mx-2 ws-input" type="date">
-										<input formControlName="to_date" class="mx-2 ws-input" type="date">
+										<input [min]="dateNewFromLess(idx)| date:'yyyy-MM-dd'"
+											[ngClass]="isValidDate(newPromoForm.value.from_date)" formControlName="from_date"
+											class="mx-2 ws-input" type="date">
+										<input [min]="dateNewToLess()| date:'yyyy-MM-dd'"
+											[ngClass]="isValidDate(newPromoForm.value.to_date)" formControlName="to_date"
+											class="mx-2 ws-input" type="date">
 									</div>
 
 									<div class="mt-1 d-flex">
-										<span> {{'inventory.customer.trade-offer.buy'| translate}}</span><input
-											formControlName="buy_qty" class="mx-2 ws-input" type="text"
-											placeholder="QTY">
+										<span> {{'inventory.customer.trade-offer.buy'| translate}}</span>
+										<input [ngClass]="isValidQty(newPromoForm.value.buy_qty)" formControlName="buy_qty"
+											class="mx-2 ws-input" type="text" placeholder="QTY">
 										<br>
-										<span> {{'inventory.customer.trade-offer.free'| translate}}</span><input
-											formControlName="free_qty" class="mx-2 ws-input" type="text"
-											placeholder="QTY">
+										<span> {{'inventory.customer.trade-offer.free'| translate}}</span>
+										<input [ngClass]="isValidQty(newPromoForm.value.free_qty)" formControlName="free_qty"
+											class="mx-2 ws-input" type="text" placeholder="QTY">
 									</div>
 								</div>
-								<div (click)="showNewPromo(idx)" *ngIf="!isNewPromo || idx !== inx"
-									class="promo mt-1 text-center p-5">
+								<div (click)="showNewPromo(idx)" *ngIf="!isNewPromo || idx !== inx" class="promo mt-1 text-center p-5">
 									{{'inventory.customer.trade-offer.new-promotion'| translate}}
 								</div>
 							</form>
@@ -153,7 +156,8 @@
 
 		</div>
 		<p-footer>
-			<button type="button" pButton (click)="confirmLookUpDialog()" icon="pi pi-check" label="Yes"></button>
+			<button [disabled]="this.selectedProduct.length == 0" type="button" pButton (click)="confirmLookUpDialog()"
+				icon="pi pi-check" label="Yes"></button>
 			<button type="button" pButton icon="pi pi-close" (click)="cancelLookUpDialog()" label="No"
 				class="ui-button-secondary"></button>
 		</p-footer>

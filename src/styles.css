@@ -43,3 +43,13 @@
   cursor: pointer;
   font-size: 52px;
 }
+
+.invalid-promo{
+  border: 1px solid red;
+}
+.success{
+  border: 1px solid lightgray/* #FEFEFE;; */
+}
+.body .ui-messages.ui-messages-error .ui-messages-icon{
+  display: none;
+}

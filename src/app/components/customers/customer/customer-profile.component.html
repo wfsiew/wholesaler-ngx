@@ -7,38 +7,40 @@
           <h5>Contact</h5>
 
           <div class="d-flex">
-            <span ngClass="info-cons" class="mdi mdi-email"></span>&nbsp;<input type="text" class="ws-input mb-1"
-              pInputText formControlName="email" placeholder="Company Email">
+            <span ngClass="info-cons" class="mdi mdi-email"></span>&nbsp;
+            <input type="text" class="ws-input mb-1"
+              pInputText formControlName="email" [maxlength]="inputLength.LENGTH_VALIDATIONS.EMAIL" placeholder="Company Email">
           </div>
           <div class="d-flex">
             <div style="width:50%" class="pr-2  d-flex">
-              <span ngClass="info-cons" class="mdi mdi-phone"></span>&nbsp;<input type="text" class="ws-input mb-1"
+              <span ngClass="info-cons" class="mdi mdi-phone"></span>&nbsp;
+              <input type="text" class="ws-input mb-1" [maxlength]="inputLength.LENGTH_VALIDATIONS.PHONE"
                 pInputText formControlName="phone" placeholder="Company Phone">
             </div>
             <div style="width:50%" class="pl-2 d-flex">
               <span ngClass="info-cons" class="mdi mdi-fax"></span>&nbsp;<input type="text" class="ws-input mb-1"
-                pInputText formControlName="fax" placeholder="Company Fax">
+                pInputText formControlName="fax" placeholder="Company Fax" [maxlength]="inputLength.LENGTH_VALIDATIONS.FAX">
             </div>
           </div>
         </div>
 
         <div class="cus-address p-3 m-3">
           <h5>Address </h5>
-          <input type="text" class="ws-input mb-1" pInputText formControlName="addr_2" placeholder="Address Line 2">
-          <input type="text" class="ws-input mb-1" pInputText formControlName="addr_1" placeholder="Address Line 1">
+          <input type="text" class="ws-input mb-1" [maxlength]="inputLength.LENGTH_VALIDATIONS.ADDR_1" pInputText formControlName="addr_2" placeholder="Address Line 2">
+          <input type="text" class="ws-input mb-1" [maxlength]="inputLength.LENGTH_VALIDATIONS.ADDR_2" pInputText formControlName="addr_1" placeholder="Address Line 1">
 
           <div class="d-flex">
             <div style="width:50%" class="pr-2 mb-1">
-              <p-dropdown [options]="countries" (onChange)="setCountry($event)" formControlName="country" selectId="id"
+              <p-dropdown [options]="countries" (onChange)="setCountry($event.value.id)" [(ngModel)]="countryId" [filter]="true" formControlName="country" selectId="id"
                 optionLabel="name"></p-dropdown>
             </div>
             <div style="width:50%" class="pl-2 mb-1">
-              <p-dropdown [options]="states" (onChange)="setState($event)" formControlName="state" selectId="id"
+              <p-dropdown [options]="states" (onChange)="setState($event)" formControlName="state"  [(ngModel)]="stateId" selectId="id"
                 optionLabel="name"></p-dropdown>
             </div>
           </div>
-          <input type="text" class="ws-input mb-1" pInputText formControlName="postcode" placeholder="Postcode">
-          <input type="text" class="ws-input mb-1" pInputText formControlName="city" placeholder="City">
+          <input type="text" class="ws-input mb-1" [maxlength]="inputLength.LENGTH_VALIDATIONS.POST_CODE" pInputText formControlName="postcode" placeholder="Postcode">
+          <input type="text" class="ws-input mb-1" [maxlength]="inputLength.LENGTH_VALIDATIONS.CITY" pInputText formControlName="city" placeholder="City">
         </div>
       </section>
     </div>

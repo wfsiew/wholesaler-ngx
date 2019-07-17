@@ -18,7 +18,7 @@ export class ProductVariantComponent implements OnInit {
   variant: any = {};
   list_expired = [];
   list_expires = [];
-  month = '';
+  month = 1;
   total_expired = 0;
   total_expires = 0;
   id = 0;
@@ -52,8 +52,7 @@ export class ProductVariantComponent implements OnInit {
   }
 
   loadProductVariant() {
-    
-    this.inventoryService.get_productVariant(this.id, this.vid).subscribe((res: any) => {
+     this.inventoryService.get_productVariant(this.id, this.vid).subscribe((res: any) => {
       this.variant = res;
     },
     (err: any) => {
@@ -70,9 +69,7 @@ export class ProductVariantComponent implements OnInit {
           n += k.qty;
         });
         this.total_expired = n;
-      }
-
-      else {
+      } else {
         this.total_expired = 0;
       }
     },
@@ -90,9 +87,7 @@ export class ProductVariantComponent implements OnInit {
           n += k.qty;
         });
         this.total_expires = n;
-      }
-
-      else {
+      } else {
         this.total_expires = 0;
       }
     },
@@ -106,19 +101,17 @@ export class ProductVariantComponent implements OnInit {
   }
 
   setMonth(x) {
-    if (x == 0) {
-      this.month = '';
-    }
-
-    else {
-      this.month = `${x}`;
+    if (x === 0) {
+      this.month = null;
+    } else {
+      this.month = x;
     }
 
     this.loadExpires();
   }
 
-  handleError(err, summary) {
-    this.pmessageService.add({ severity: 'error', summary: summary, detail: err });
+  handleError(err, sry) {
+    this.pmessageService.add({ severity: 'error', summary: sry, detail: err });
   }
 }
 

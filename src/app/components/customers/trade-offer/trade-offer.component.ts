@@ -14,8 +14,12 @@ import { Helper } from 'src/app/shared/helpers';
   styleUrls: ['./trade-offer.component.css']
 })
 export class TradeOfferComponent implements OnInit {
+
+  readonly isEmpty = Helper.isEmpty;
+
   promoForm: FormGroup;
   newPromoForm: FormGroup;
+  inValidProductId = false;
   lsSelectedSort = [];
   lsPromo = [];
   selectedProduct = [];
@@ -28,6 +32,7 @@ export class TradeOfferComponent implements OnInit {
   display = false;
   productId: null;
   isNewPromo = false;
+  isValidInput = false;
   isNewOffer = false;
   lookUpIndex = null;
   inx = null;
@@ -35,8 +40,8 @@ export class TradeOfferComponent implements OnInit {
   isShowFilter = false;
   tradeOfferIndex = null;
   newPrdImage = 'assets/img/cube.png';
-  prodcutLook = {id: '', indx: ''};
-
+  productLook = {id: '', indx: ''};
+  text = '';
   SORT_FIELD = {
     NAME: 'name',
     QTY: 'total_qty'
@@ -76,7 +81,6 @@ export class TradeOfferComponent implements OnInit {
   ];
 
   readonly AppConstant = AppConstant;
-  readonly isEmpty = Helper.isEmpty;
 
   constructor(
     private fb: FormBuilder,
@@ -180,12 +184,17 @@ export class TradeOfferComponent implements OnInit {
       product_id: this.productId,
       offered_price: tradeOffer
     };
-    this.customerService.post_addCustomerTradeOffer(customerId, data).subscribe((res) => {
-      this.selectedProduct.pop();
-      this.loadTradeOffer();
-      this.isNewOffer = false;
-      this.initNewProduct();
-    });
+    if (this.productId === null) {
+      this.inValidProductId = true;
+    } else {
+      this.customerService.post_addCustomerTradeOffer(customerId, data).subscribe((res) => {
+        this.selectedProduct.pop();
+        this.inValidProductId = false;
+        this.loadTradeOffer();
+        this.isNewOffer = false;
+        this.initNewProduct();
+      });
+    }
   }
 
   changePrice(price, tradeOffer, idx) {
@@ -280,13 +289,14 @@ export class TradeOfferComponent implements OnInit {
 
   openDialog(prdId, idx) {
     this.showDialog = !this.showDialog;
-    this.prodcutLook = {id: prdId, indx: idx};
+    this.productLook = {id: prdId, indx: idx};
     this.selectedProduct.pop();
   }
 
   confirmLookUpDialog() {
     this.showDialog = false;
     this.newPrdImage = this.selectedProduct[0].picture;
+    this.inValidProductId = false;
   }
 
   selectList(i) {
@@ -295,6 +305,15 @@ export class TradeOfferComponent implements OnInit {
     } else {
       return;
     }
+  }
+
+  get ff(): string {
+    const o = this.promoForm.controls;
+    return o.promotions.value;
+  }
+
+  get f() {
+   return this.promotions;
   }
 
   cancelLookUpDialog() {
@@ -332,8 +351,8 @@ export class TradeOfferComponent implements OnInit {
     this.newPromoForm.patchValue({
       from_date: '',
       to_date: '',
-      buy_qty: 0,
-      free_qty: 0
+      buy_qty: 1,
+      free_qty: 1
     });
     this.inx = idx;
   }
@@ -363,7 +382,7 @@ export class TradeOfferComponent implements OnInit {
 
   onSort(o) {
     const i = _.findIndex(this.lsSelectedSort, (k) => {
-      return k.fieldname === o.field;
+      return k.fieldame === o.field;
     });
     if (i >= 0) {
       if (this.lsSelectedSort[i].order === o.order) {
@@ -381,6 +400,95 @@ export class TradeOfferComponent implements OnInit {
 
   refresh() {
     console.log(this.lsSelectedSort);
+  }
+
+  isValidQty(o) {
+    let bl = this.AppConstant.VALIDATE_INPUT_BORDER.VALID;
+    this.isValidInput = true;
+    const fd = this.AppConstant.VALIDATEFORM.QTY.test(o);
+    if (!fd) {
+      this.isValidInput = false;
+      bl = this.AppConstant.VALIDATE_INPUT_BORDER.INVALID;
+    }
+    return bl;
+  }
+
+  isValidPrice(o) {
+    // let bl = this.AppConstant.VALIDATE_INPUT_BORDER.VALID;
+    // this.isValidInput = true;
+    let lb = false;
+    const fd = this.AppConstant.VALIDATEFORM.PRICE.test(o.value);
+    if (!fd) {
+      lb = true;
+      // this.isValidInput = false;
+      // bl = this.AppConstant.VALIDATE_INPUT_BORDER.INVALID;
+    }
+    return lb;
+  }
+
+  notMandatoryValidPrice(o) {
+    let bl = this.AppConstant.VALIDATE_INPUT_BORDER.VALID;
+    this.isValidInput = true;
+    const fd = this.AppConstant.VALIDATEFORM.PRICE.test(o);
+    if (!fd && o.value != null) {
+      this.isValidInput = false;
+      bl = this.AppConstant.VALIDATE_INPUT_BORDER.INVALID;
+    }
+    return bl;
+  }
+
+  isValidDate(o) {
+    this.isValidInput = true;
+    let bl = this.AppConstant.VALIDATE_INPUT_BORDER.VALID;
+    const fd = this.AppConstant.VALIDATEFORM.DATE.test(o);
+    if (!fd) {
+      this.isValidInput = false;
+      bl = this.AppConstant.VALIDATE_INPUT_BORDER.INVALID;
+    }
+    return bl;
+  }
+
+  dateFromLess(idx) {
+    let fDate = null;
+    if (idx === 0) {
+      fDate = new Date();
+    } else if (idx === 1) {
+      fDate = this.promoForm.value.promotions[0].to_date;
+    } else {
+      fDate = this.promoForm.value.promotions[idx].from_date;
+    }
+    return fDate;
+  }
+
+  dateToLess(idx) {
+    let tDate = null;
+    if (idx === 0) {
+      tDate = this.promoForm.value.promotions[idx].from_date;
+    } else {
+      tDate = this.promoForm.value.promotions[idx].from_date;
+    }
+    return tDate;
+  }
+
+  dateNewFromLess(idx) {
+    let fDate = null;
+    const pr = this.lstradeOff[idx].promotions;
+    if (pr.length > 0) {
+      fDate = this.lstradeOff[idx].promotions[0].to_date;
+    } else {
+     fDate = new Date();
+    }
+    return fDate;
+  }
+
+  dateNewToLess() {
+    let tDate = null;
+    if (!Helper.isEmpty(this.promoForm.value.from_date)) {
+      tDate = this.promoForm.value.from_date;
+    } else {
+      tDate = new Date();
+    }
+    return tDate;
   }
 
 

@@ -47,8 +47,10 @@
             </div>
           </div>
           <div class="col-3">
-            <div *ngIf="isEdit || !isAdd" class="float-right">
-              <span class="pr-5 pl-5 stock-lb border border-dark rounded">{{f.stock_balance.value}}</span>
+            <div *ngIf="isEdit || !isAdd" class="float-right mt-3">
+              <span class="p-3 stock-lb border border-dark rounded-circle" style="font-size:33px;">
+                {{f.stock_balance.value}}
+              </span>
             </div>
             <!-- <div *ngIf="isEdit" class="float-right">
               <div class="cube-icon-par rounded-circle ml-3">
@@ -63,8 +65,9 @@
               <div class="opt-box d-flex">
                 <span class="d-inline-block">{{ 'inventory.product-info.ws-price' | translate }} </span>
                 <input type="text" [readonly]="(iswsPriceReadOnly && isEdit) || isRead"
-                  [ngClass]="{ 'editable-input': !iswsPriceReadOnly }" name="wholesaler_price"
+                  [ngClass]="isValidPrice(mform.controls.wholesaler_price)" name="wholesaler_price"
                   formControlName="wholesaler_price" class="op-price" placeholder="0.00" />
+                  <!-- { 'editable-input': !iswsPriceReadOnly } -->
                 <span class="op-price-rm op-rm-ws-price">{{ 'currency' | translate }}</span>
                 <span *ngIf="iswsPriceReadOnly && isEdit" (click)="iswsPriceReadOnly = false">
                   <i class="pi pi-pencil"></i>
@@ -72,11 +75,12 @@
                 <span *ngIf="!iswsPriceReadOnly && isEdit" (click)="iswsPriceReadOnly = true">
                   <i class="pi pi-times"></i>
                 </span>
-
+                <!-- notMandatoryValidPrice -->
                 <span class="ml-auto d-inline-block">{{ 'inventory.product-info.rr-price' | translate }}</span>
                 <input type="text" [readonly]="(isrretailPriceReadOnly && isEdit) || isRead"
-                  [ngClass]="{ 'editable-input': !isrretailPriceReadOnly }" name="recommended_retail_price"
+                  [ngClass]="notMandatoryValidPrice(mform.controls.recommended_retail_price)" name="recommended_retail_price"
                   formControlName="recommended_retail_price" class="op-price" placeholder="0.00" />
+                  <!-- { 'editable-input': !isrretailPriceReadOnly } -->
                 <span class="op-price-rm op-rm-retail-price">{{ 'currency' | translate }}</span>
                 <span *ngIf="isrretailPriceReadOnly && isEdit">
                   <i (click)="isrretailPriceReadOnly = false" class="pi pi-pencil"></i>
@@ -145,6 +149,7 @@
                 </div>
                 <div class="item-card-footer text-center">
                   <span class="product-total">{{o.quantity.qty}}</span>
+                  <!-- {{o |json}} -->
                   <!-- <span class="product-qrcod float-right">
 										<qrcode [qrdata]="prd.barcode" [size]="30" [level]="'M'"></qrcode>
 									</span> -->
@@ -158,14 +163,11 @@
               <label>{{ 'inventory.product-info.par-level' | translate }}:&nbsp;</label>
               <div class="ui-inputgroup">
                 <button type="button" pButton icon="pi pi-minus" class="ui-button-danger"
-                  [disabled]="isRead || f.par_level.value == 0" 
-                  (mouseup)="onMouseUpminusParLevelQty($event)"
-                  (mousedown)="onMouseDownminusParLevelQty($event)"></button>
+                  [disabled]="isRead || f.par_level.value == 0" (click)="minusParLevelQty()"></button>
                 <input type="text" pInputText readonly class="text-center txt-par" placeholder="Quantity"
                   name="par_level" formControlName="par_level" />
                 <button type="button" pButton icon="pi pi-plus" class="ui-button-success" [disabled]="isRead"
-                  (mouseup)="onMouseUpaddParLevelQty($event)"
-                  (mousedown)="onMouseDownaddParLevelQty($event)"></button>
+                  (click)="addParLevelQty()"></button>
               </div>
               <label>
                 {{ 'inventory.product-info.optimum-level' | translate }}:&nbsp;</label>
@@ -190,7 +192,7 @@
       <div class="d-flex flex-wrap">
         <form [formGroup]="promoFormArray" (ngSubmit)="saveTest(d.value)" #d="ngForm">
           <div *ngIf="!isEmpty(lspromotion)" formArrayName="promotions" class="d-flex flex-wrap">
-            <div *ngFor="let o of promotions.controls; let i=index" [ngClass]="isValidFormArray" [formGroupName]="i" class="card mr-1 mt-1"
+            <div *ngFor="let o of promotions.controls; let i=index" [formGroupName]="i" class="card mr-1 mt-1"
               style="min-width: 17rem; min-height: 17rem">
               <div class="text-right mt-1">
                 <!-- <span (click)="editPromotion(i)">
@@ -202,12 +204,12 @@
                 <div class="row p-0 m-0 pt-2">
                   <div class="w-50 px-1">
                     <!-- <input type="text" readonly formControlName="from_date" class="product-date text-center" *ngIf="!isPromoEdit(i)" /> -->
-                    <input type="date" formControlName="from_date" class="product-date" (focus)="isTouched()" />
+                    <input type="date" formControlName="from_date" [min] = "dateFromLess(i)| date:'yyyy-MM-dd'" [ngClass] = "isValidDate(o.value.from_date)" class="product-date" (focus)="isTouched()" />
                     <input type="hidden" formControlName="id" />
                   </div>
                   <div class="w-50 px-1">
                     <!-- <input type="text" readonly formControlName="to_date" class="product-date text-center" *ngIf="!isPromoEdit(i)" /> -->
-                    <input type="date" formControlName="to_date" class="product-date" (focus)="isTouched()" />
+                    <input type="date" formControlName="to_date" [min] = "dateToLess(i)| date:'yyyy-MM-dd'" [ngClass] = "isValidDate(o.value.to_date)" class="product-date" (focus)="isTouched()" />
                   </div>
                 </div>
               </div>
@@ -255,16 +257,16 @@
             </div>
           </div>
         </form>
-        <form [formGroup]='promoForm' #val>
-          <div *ngIf="addNewPromotion" [ngClass]="isValidForm" class="card mr-1 mt-1" style="min-width: 17rem; min-height: 17rem">
+        <form *ngIf = "promotions.length < AppConstant.MAX_PROMO" [formGroup]='promoForm' #val>
+          <div *ngIf="addNewPromotion" class="card mr-1 mt-1" style="min-width: 17rem; min-height: 17rem">
             <div class="text-right mt-1">
               <span (click)="addNewPromotion = false" class="pi pi-times px-2 cursor-pointer"></span>
               <div class="row p-0 m-0 pt-2">
                 <div class="w-50 px-1">
-                  <input type="date" formControlName="from_date" class="product-date" />
+                  <input type="date" [min] = "dateNewFromLess()| date:'yyyy-MM-dd'" [ngClass] = "isValidDate(promoForm.value.from_date)" formControlName="from_date" class="product-date" />
                 </div>
                 <div class="w-50 px-1">
-                  <input type="date" formControlName="to_date" class="product-date" />
+                  <input type="date" [min] = "dateNewToLess()| date:'yyyy-MM-dd'" [ngClass] = "isValidDate(promoForm.value.to_date)" formControlName="to_date" class="product-date" />
                 </div>
               </div>
             </div>
@@ -311,7 +313,7 @@
 
         <!-- <button (click) = "testMe(val.value)"></button> -->
 
-        <div *ngIf="!addNewPromotion" (click)="addNewPromo()" class="card mr-1 mt-1 new-promo-card cursor-pointer"
+        <div *ngIf="!addNewPromotion && promotions.length < AppConstant.MAX_PROMO" (click)="addNewPromo()" class="card mr-1 mt-1 new-promo-card cursor-pointer"
           style="width: 17rem; height: 17rem">
           <div class="card-body text-center mt-5 pt-5">
             <p>{{ 'inventory.product-info.new-promo' | translate }}</p>
@@ -338,6 +340,7 @@
           </div>
         </div>
       </div>
+      <span class="badge py-2 px-5 ws-bg-primary" (click) = "toCustomer()">View All Customers</span>
     </div>
   </section>
 </div>
@@ -347,28 +350,24 @@
     {{ 'inventory.product-info.invalid-promo-form' | translate }}
   </div>
   <div class="text-center">
-    <!-- <button class="btn-sm mx-2" (click)="confirmSavePromo()">Yes</button> -->
     <button class="btn-sm mx-2 btn-danger" (click)="display = false">{{ 'ok' | translate }}</button>
   </div>
 </p-dialog>
 
 <p-confirmDialog header="" icon="pi pi-exclamation-triangle"></p-confirmDialog>
 
-<!-- <button type="button" (click)="showDialog()" pButton icon="pi pi-info-circle" label="Show"></button> -->
-
 <br><br><br><br><br> <br><br> <br><br>
 <p-sidebar [baseZIndex]='1' position='bottom' [modal]='false' blockScroll='true' class="bottom-sidebar text-center"
   [showCloseIcon]="false" [visible]="true">
   <div>
-    <!-- isValidPromoForm -->
-    <button [disabled]="invalidData" (click)="onSubmit()" class="ws-save-btn">
+    <button [disabled]="invalidData || isValidInput" (click)="onSubmit()" class="ws-save-btn">
       <span class="mdi mdi-content-save ws-nav-icon" (click)="display = false"></span>
-      {{'save' | translate}}
+      <span class="footer-lb-name">{{'save' | translate}} </span>
     </button>
 
       <span (click)="onCancel()">
         <span (click)="display = false" class="mdi mdi-close-circle ws-nav-icon"></span>
       </span>
-    {{'cancel' | translate}}
+    <span class="footer-lb-name">{{'cancel' | translate}}</span>
   </div>
 </p-sidebar>

@@ -19,7 +19,7 @@
   <div class="w-100 mt-2">{{'inventory.customer.trade-offer.total'| translate}} 45 {{'inventory.customer.trade-offer.result-found'| translate}}. </div>
   <div *ngIf="wishList" class="hist-box-list mt-3">
     <div class="w-100 p-1 d-flex flex-wrap">
-      <div *ngFor="let lsw of transList" class="card text-center vr-card" (click)="loadProductVariantByID(o.id)">
+      <div *ngFor="let lsw of wishList" class="card text-center vr-card" (click)="loadProductVariantByID(o.id)">
         <div class="d-flex justify-content-center cursor-pointer">
           <img class="product-img" [src]="lsw.product.picture || assets/img/cube.png" />
         </div>

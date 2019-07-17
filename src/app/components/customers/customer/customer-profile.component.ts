@@ -6,6 +6,8 @@ import { Helper } from 'src/app/shared/helpers';
 import { Location } from '@angular/common';
 import { CustomerDetailsComponent } from '../customer-details/customer-details.component';
 import * as _ from 'lodash';
+import { AppConstant } from 'src/app/shared/constants/app.constant';
+import { CustomerInputLength } from '../customer-constants';
 
 @Component({
   selector: 'app-customer-profile',
@@ -14,11 +16,14 @@ import * as _ from 'lodash';
 })
 export class CustomerProfileComponent implements OnInit {
   frm: FormGroup;
+  readonly appConstant = AppConstant;
+  readonly inputLength = CustomerInputLength;
+
   @ViewChild(CustomerDetailsComponent) child;
   countries = [];
   states = [];
-  countryId = 1;
-  stateId = 1;
+  countryId = null;
+  stateId = null;
   constructor(
     private fb: FormBuilder,
     private customerService: CustomerService,
@@ -35,21 +40,42 @@ export class CustomerProfileComponent implements OnInit {
   createForm() {
     this.frm = this.fb.group({
       id: ['', [Validators.required]],
-      company_name: ['', [Validators.required]],
-      phone: ['', [Validators.required]],
-      fax: [''],
-      email: ['', [Validators.required]],
-      addr_1: ['', [Validators.required]],
-      addr_2: [''],
-      postcode: ['', [Validators.required]],
-      city: ['', [Validators.required]],
+      company_name: ['',
+      [Validators.required,
+        Validators.maxLength(this.inputLength.LENGTH_VALIDATIONS.COMPANY_NAME)]],
+
+      phone: ['',
+      [Validators.pattern(this.appConstant.VALIDATEFORM.PHONE_NO),
+        Validators.maxLength(this.inputLength.LENGTH_VALIDATIONS.PHONE)]],
+
+      fax: ['', [Validators.pattern(this.appConstant.VALIDATEFORM.FAX_NO),
+        Validators.maxLength(this.inputLength.LENGTH_VALIDATIONS.FAX)]],
+
+      email: ['',
+      [Validators.required,
+        Validators.maxLength(this.inputLength.LENGTH_VALIDATIONS.EMAIL)]],
+
+      addr_1: ['',
+      [Validators.required,
+        Validators.maxLength(this.inputLength.LENGTH_VALIDATIONS.ADDR_1),
+        Validators.pattern(this.appConstant.VALIDATEFORM.ADDRESS_LINE1)]],
+
+      addr_2: ['', [Validators.pattern(this.appConstant.VALIDATEFORM.ADDRESS_LINE2)]],
+
+      postcode: ['', [Validators.required, Validators.pattern(this.appConstant.VALIDATEFORM.POST_CODE)]],
+
+      city: ['', [Validators.required, Validators.maxLength(this.inputLength.LENGTH_VALIDATIONS.CITY)]],
+
       state: ['', [Validators.required]],
+
       country: ['', [Validators.required]],
     });
   }
   setCustomerProfile() {
     const id = this.route.snapshot.params.id;
     this.customerService.get_customer(id).subscribe((res: any) => {
+      this.setCountry(res.address.country);
+      this.stateId = res.address.state;
       this.frm.patchValue(
         {
           id: res.id,
@@ -67,6 +93,7 @@ export class CustomerProfileComponent implements OnInit {
       );
     });
   }
+
   updateProfile() {
     const body = {
       id: this.frm.value.id,
@@ -97,14 +124,12 @@ export class CustomerProfileComponent implements OnInit {
   loadCountryList() {
     this.customerService.get_countryList().subscribe((res: any) => {
       this.countries = res;
-      this.stateList(this.frm.value.country);
     });
   }
 
-  setCountry(country) {
-    const countryId = country.value.id;
-    this.stateList(countryId);
-    this.countryId = countryId;
+  setCountry(id) {
+    this.countryId = id;
+    this.stateList(id);
   }
 
   stateList(countryId) {

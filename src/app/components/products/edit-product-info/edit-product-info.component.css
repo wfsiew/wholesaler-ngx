@@ -54,7 +54,7 @@
 
 .upload-img-lb {
   object-fit: cover;
-  color: white;
+  color: gray;
   margin-left: 5px;
   /* margin-top: 2px; */
   font-size: 32px;
@@ -252,7 +252,15 @@ span.pi-times:hover {
   min-width: 150px;
   width: 150px;
 }
+.footer-lb-name{
+  position: absolute;
+  margin-top: 67px;
+  margin-left: -48px;
+}
 
 .invalid-promo{
   border: 1px solid red;
+}
+.success{
+  border: 1px solid lightgray/* #FEFEFE;; */
 }

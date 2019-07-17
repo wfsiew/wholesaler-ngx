@@ -23,16 +23,14 @@ export class InventoryService {
     if (!Helper.isEmpty(category)) {
       prm = prm.append('category', category);
     }
-    
     return this.http.get(`${this.inventoryUrl}/products`, { params: prm, observe: 'response' });
   }
 
-  get_checkBarcodeExist(barcode: string, scanned_summary_id: number) {
+  get_checkBarcodeExist(barcode: string, scannedSummaryId: number) {
     let prm = new HttpParams().set('barcode', barcode);
-    if (scanned_summary_id != 0) {
-      prm = prm.append('scanned_summary_id', `${scanned_summary_id}`);
+    if (scannedSummaryId !== 0) {
+      prm = prm.append('scanned_summary_id', `${scannedSummaryId}`);
     }
-    
     return this.http.get(`${this.inventoryUrl}/check-barcode`, { params: prm });
   }
 
@@ -41,7 +39,7 @@ export class InventoryService {
   }
 
   get_productCapacityList(id) {
-    let prm = new HttpParams().set('category_id', id);
+    const prm = new HttpParams().set('category_id', id);
     return this.http.get(`${this.inventoryUrl}/product-capacity`, { params: prm });
   }
 
@@ -78,24 +76,25 @@ export class InventoryService {
     return this.http.get(`${this.inventoryUrl}/add-batch-resp/${id}`);
   }
 
-  get_scannedBatchQRCodeAll(scanned_summary_id) {
-    return this.http.get(`${this.inventoryUrl}/product-summary/${scanned_summary_id}/qr-codes`, { responseType: 'blob' }).pipe(
+  get_scannedBatchQRCodeAll(scannedSummaryId) {
+    return this.http.get(`${this.inventoryUrl}/product-summary/${scannedSummaryId}/qr-codes`, { responseType: 'blob' }).pipe(
       map((res: any) => {
         return new Blob([res], { type: 'application/pdf' });
       })
     );
   }
 
-  get_scannedBatchQRCode(scanned_summary_id, scanned_batch_id) {
-    return this.http.get(`${this.inventoryUrl}/product-summary/${scanned_summary_id}/scanned_batch/${scanned_batch_id}`, { responseType: 'blob' }).pipe(
+  get_scannedBatchQRCode(scannedSummaryId, scannedBatchId) {
+    return this.http.get(`${this.inventoryUrl}/product-summary/${scannedSummaryId}/scanned_batch/${scannedBatchId}`,
+    { responseType: 'blob' }).pipe(
       map((res: any) => {
         return new Blob([res], { type: 'application/pdf' });
       })
     );
   }
 
-  get_productBatchList(id, expired='', expires='') {
-    let prm = new HttpParams()
+  get_productBatchList(id, expired, expires) {
+    const prm = new HttpParams()
     .set('expired', `${expired}`)
     .set('expires', `${expires}`);
     return this.http.get(`${this.inventoryUrl}/product/${id}/product-batches`, { params: prm });
@@ -105,12 +104,12 @@ export class InventoryService {
     return this.http.get(`${this.inventoryUrl}/product/${id}/product-variants`);
   }
 
-  get_productVariant(product_id, product_variant_id) {
-    return this.http.get(`${this.inventoryUrl}/product/${product_id}/product-variant/${product_variant_id}`);
+  get_productVariant(productId, productVariantId) {
+    return this.http.get(`${this.inventoryUrl}/product/${productId}/product-variant/${productVariantId}`);
   }
 
   get_productTradeOfferList(id, page, limit) {
-    let prm = new HttpParams()
+    const prm = new HttpParams()
     .set('_page', page)
     .set('_limit', limit);
     return this.http.get(`${this.inventoryUrl}/product/${id}/trade-offers`, { params: prm, observe: 'response' });
@@ -124,11 +123,11 @@ export class InventoryService {
     return this.http.post(`${this.inventoryUrl}/product/${id}/promotion`, o);
   }
 
-  post_updatePromotion(product_id, promotion_id, o) {
-    return this.http.post(`${this.inventoryUrl}/product/${product_id}/promotion/${promotion_id}`, o);
+  post_updatePromotion(productId, promotionId, o) {
+    return this.http.post(`${this.inventoryUrl}/product/${productId}/promotion/${promotionId}`, o);
   }
 
-  delete_promotion(product_id, promotion_id) {
-    return this.http.delete(`${this.inventoryUrl}/product/${product_id}/promotion/${promotion_id}`);
+  delete_promotion(productId, promotionId) {
+    return this.http.delete(`${this.inventoryUrl}/product/${productId}/promotion/${promotionId}`);
   }
 }

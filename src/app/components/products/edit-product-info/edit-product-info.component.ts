@@ -40,7 +40,7 @@ export class EditProductInfoComponent implements OnInit, OnDestroy {
   isRead = false;
   wsPrice = true;
   rretailPrice = true;
-
+  isValidInput = false;
   id = 0;
   barcode = '';
   imageUrl = 'assets/img/cube.png';
@@ -63,9 +63,6 @@ export class EditProductInfoComponent implements OnInit, OnDestroy {
   lspromotion = [];
   lstradeoffer = [];
 
-  mouseParLevelPlus = false;
-  mouseParLevelMinus = false;
-
   tradeOffer = {
     pager: new Pager(1)
   };
@@ -78,7 +75,7 @@ export class EditProductInfoComponent implements OnInit, OnDestroy {
   readonly isEmpty = Helper.isEmpty;
   readonly getBlankProfilePicture = Helper.getBlankProfilePicture;
 
-  constructor(
+  constructor (
     private location: Location,
     private fb: FormBuilder,
     private route: ActivatedRoute,
@@ -136,9 +133,9 @@ export class EditProductInfoComponent implements OnInit, OnDestroy {
         this.setCategory(res[0].id, null);
       }
     },
-    (err: any) => {
-      this.handleError(err, 'LOAD PRODUCT CATEGORY');
-    });
+      (err: any) => {
+        this.handleError(err, 'LOAD PRODUCT CATEGORY');
+      });
   }
 
   onBack() {
@@ -148,19 +145,19 @@ export class EditProductInfoComponent implements OnInit, OnDestroy {
         AppLocaleConstant.NO,
         AppLocaleConstant.FORM_UNSAVED_MSG
       ])
-      .subscribe(res => {
-        this.confirmationService.confirm({
-          acceptLabel: res[AppLocaleConstant.YES],
-          rejectLabel: res[AppLocaleConstant.NO],
-          message: res[AppLocaleConstant.FORM_UNSAVED_MSG],
-          accept: () => {
-            this.router.navigate(['products']);
-          },
-          reject: () => {
+        .subscribe(res => {
+          this.confirmationService.confirm({
+            acceptLabel: res[AppLocaleConstant.YES],
+            rejectLabel: res[AppLocaleConstant.NO],
+            message: res[AppLocaleConstant.FORM_UNSAVED_MSG],
+            accept: () => {
+              this.router.navigate(['products']);
+            },
+            reject: () => {
 
-          }
+            }
+          });
         });
-      });
     } else {
       this.router.navigate(['products']);
     }
@@ -185,42 +182,6 @@ export class EditProductInfoComponent implements OnInit, OnDestroy {
     if (this.f.par_level.value > 1) {
       this.isTouched();
       this.mform.patchValue({ par_level: this.f.par_level.value - 1 });
-    }
-  }
-
-  onMouseUpminusParLevelQty(event) {
-    this.mouseParLevelMinus = false;
-  }
-
-  onMouseDownminusParLevelQty(event) {
-    this.mouseParLevelMinus = true;
-    this.changeParLevelDown();
-  }
-
-  onMouseUpaddParLevelQty(event) {
-    this.mouseParLevelPlus = false;
-  }
-
-  onMouseDownaddParLevelQty(event) {
-    this.mouseParLevelPlus = true;
-    this.changeParLevelUp();
-  }
-
-  changeParLevelUp() {
-    if (this.mouseParLevelPlus) {
-      this.addParLevelQty();
-      setTimeout(() => {
-        this.changeParLevelUp();
-      }, 100);
-    }
-  }
-
-  changeParLevelDown() {
-    if (this.mouseParLevelMinus) {
-      this.minusParLevelQty();
-      setTimeout(() => {
-        this.changeParLevelDown();
-      }, 100);
     }
   }
 
@@ -302,8 +263,8 @@ export class EditProductInfoComponent implements OnInit, OnDestroy {
       id: 0,
       from_date: null,
       to_date: null,
-      buy_qty: 0,
-      free_qty: 0
+      buy_qty: 1,
+      free_qty: 1
     });
   }
 
@@ -380,7 +341,7 @@ export class EditProductInfoComponent implements OnInit, OnDestroy {
     } else {
       const promoData = this.promoForm.value;
       this.addNewPromotion = false;
-      const fm = <FormArray>this.promoFormArray.get('promotions');
+      const fm = <FormArray> this.promoFormArray.get('promotions');
       fm.push(this.fb.group(promoData));
       // const id = this.route.snapshot.params.id;
       // this.inventoryService.post_addPromotion(id, promoData).subscribe((res: any) => {
@@ -490,6 +451,7 @@ export class EditProductInfoComponent implements OnInit, OnDestroy {
     this.isAdd = true;
     this.setFormControls();
     this.lsproductvar = [{ id: 0, image: this.image, quantity: this.quantity }];
+    console.log(this.quantity);
   }
 
   setFormControls() {
@@ -517,9 +479,9 @@ export class EditProductInfoComponent implements OnInit, OnDestroy {
     this.inventoryService.get_product(id).subscribe((res: any) => {
       this.setProduct(res);
     },
-    (err: any) => {
-      this.handleError(err, 'LOAD PRODUCT');
-    });
+      (err: any) => {
+        this.handleError(err, 'LOAD PRODUCT');
+      });
   }
 
   setProduct(o) {
@@ -578,25 +540,26 @@ export class EditProductInfoComponent implements OnInit, OnDestroy {
 
       const lx = [];
       if (!Helper.isEmpty(this.lsproductvar)) {
-        if (this.lsproductvar[0].id == 0) {
+        if (this.lsproductvar[0].id === 0) {
           lx.push(this.lsproductvar[0]);
         }
       }
 
       this.inventoryService.get_productVariantList(this.id).subscribe((res: any) => {
         const ls = res;
+        console.log(res);
         _.forEach(ls, (k) => {
           lx.push({
             id: k.id,
-            image: new ImageSnippet(k.picture, null), 
-            quantity: { id: 0, qty: k.qty }
+            image: new ImageSnippet(k.picture, null),
+            quantity: { id: 0, qty: k.qty, content_qty: k.content_qty }
           });
         });
         this.lsproductvar = lx;
       },
-      (err: any) => {
-        this.handleError(err, 'LOAD PRODUCT VARIANTS');
-      });
+        (err: any) => {
+          this.handleError(err, 'LOAD PRODUCT VARIANTS');
+        });
     }
   }
 
@@ -622,9 +585,9 @@ export class EditProductInfoComponent implements OnInit, OnDestroy {
         this.capacity = capacity;
       }
     },
-    (err: any) => {
-      this.handleError(err, 'LOAD PRODUCT CAPACITY');
-    });
+      (err: any) => {
+        this.handleError(err, 'LOAD PRODUCT CAPACITY');
+      });
   }
 
   setCapacity(i) {
@@ -638,15 +601,15 @@ export class EditProductInfoComponent implements OnInit, OnDestroy {
       _.forEach(ls, (k) => {
         lx.push({
           id: k.id,
-          image: new ImageSnippet(k.picture, null), 
-          quantity: { id: 0, qty: k.qty }
+          image: new ImageSnippet(k.picture, null),
+          quantity: { id: 0, qty: k.qty, content_qty: k.content_qty }
         });
       });
       this.lsproductvar = lx;
     },
-    (err: any) => {
-      this.handleError(err, 'LOAD PRODUCT VARIANTS');
-    });
+      (err: any) => {
+        this.handleError(err, 'LOAD PRODUCT VARIANTS');
+      });
   }
 
   loadProductVariantByID(id) {
@@ -697,9 +660,9 @@ export class EditProductInfoComponent implements OnInit, OnDestroy {
       this.tradeOffer.pager.setFromHeaders(res.headers);
       this.lstradeoffer = res.body;
     },
-    (err: any) => {
-      this.handleError(err, 'LOAD TRADE OFFER');
-    });
+      (err: any) => {
+        this.handleError(err, 'LOAD TRADE OFFER');
+      });
   }
 
   onTradeOfferPageChange(event) {
@@ -808,9 +771,9 @@ export class EditProductInfoComponent implements OnInit, OnDestroy {
     this.inventoryService.post_addProduct(fm).subscribe((res: any) => {
       this.onSubmitAddSuccess();
     },
-    (err: any) => {
-      this.handleError(err, 'SAVE');
-    });
+      (err: any) => {
+        this.handleError(err, 'SAVE');
+      });
   }
 
   onSubmitAddIntoExisting() {
@@ -848,9 +811,9 @@ export class EditProductInfoComponent implements OnInit, OnDestroy {
     this.inventoryService.put_addProduct(fm).subscribe((res: any) => {
       this.onSubmitAddSuccess();
     },
-    (err: any) => {
-      this.handleError(err, 'SAVE');
-    });
+      (err: any) => {
+        this.handleError(err, 'SAVE');
+      });
   }
 
   onSubmitUpdate() {
@@ -910,9 +873,9 @@ export class EditProductInfoComponent implements OnInit, OnDestroy {
     this.inventoryService.put_updateProduct(fm, id).subscribe((res: any) => {
       this.onSubmitUpdateSuccess();
     },
-    (err: any) => {
-      this.handleError(err, 'SAVE');
-    });
+      (err: any) => {
+        this.handleError(err, 'SAVE');
+      });
   }
 
   onSubmit() {
@@ -927,56 +890,99 @@ export class EditProductInfoComponent implements OnInit, OnDestroy {
     }
   }
 
-  get isValidPromoForm() {
-    let b = false;
-    if (this.promoForm.invalid || this.promoFormArray.invalid) {
-      b = false;
-     } else {
-       b = true;
-     }
-    return b;
-  }
-
-  get isValidForm() {
-    let bl = 'success';
-    if (this.promoForm.invalid && this.promoForm.touched) {
-      bl = 'invalid-promo';
-    } else {
-      bl = 'success';
+  isValidQty(o) {
+    let bl = AppConstant.VALIDATE_INPUT_BORDER.VALID;
+    const fd = this.AppConstant.VALIDATEFORM.QTY.test(o.value);
+    if (!fd) {
+      this.setNewPromo();
+      bl = AppConstant.VALIDATE_INPUT_BORDER.INVALID;
     }
     return bl;
   }
 
-  get isValidFormArray() {
-    let bl = 'success';
-    if (this.promoFormArray.invalid && this.promoFormArray.touched) {
-      console.log(this.promoFormArray.controls);
-      bl = 'invalid-promo';
-    } else {
-      bl = 'success';
+  isValidPrice(o) {
+    let bl = AppConstant.VALIDATE_INPUT_BORDER.VALID;
+    const fd = this.AppConstant.VALIDATEFORM.PRICE.test(o.value);
+    if (!fd) {
+      bl = AppConstant.VALIDATE_INPUT_BORDER.INVALID;
     }
     return bl;
   }
 
-  validateForm(control: AbstractControl): { [key: string]: boolean } {
-    const promotion = control.get('promotions');
-    console.log(promotion);
-    // if (promo.length > 0) {
-    //   _.forEach(promo, (k) => {
-    //     if (k) {
-    //       console.log(k);
-    //     }
-    //   });
-    // } else {
-    //   pr = true;
-    // }
-
-    // if (pr) {
-    //   return null;
-    // }
-    return { mismatch: false };
+  dateFromLess(idx) {
+    let fDate = null;
+    if (idx === 0) {
+      fDate = new Date();
+    } else if (idx === 1) {
+      fDate = this.promoFormArray.value.promotions[0].to_date;
+    } else {
+      fDate = this.promoFormArray.value.promotions[idx].from_date;
+    }
+    return fDate;
   }
 
+  dateToLess(idx) {
+    let tDate = null;
+    if (idx === 0) {
+      tDate = this.promoFormArray.value.promotions[idx].from_date;
+    } else {
+      tDate = this.promoFormArray.value.promotions[idx].from_date;
+    }
+    return tDate;
+  }
+
+  dateNewFromLess() {
+    let fDate = null;
+    const promoLength = this.promoFormArray.value.promotions.length;
+    if (promoLength === 0) {
+      fDate = new Date();
+    } else {
+      fDate = this.promoFormArray.value.promotions[promoLength - 1].to_date;
+    }
+    return fDate;
+  }
+
+  dateNewToLess() {
+    let tDate = null;
+    if (!Helper.isEmpty(this.promoForm.value.from_date)) {
+      tDate = this.promoForm.value.from_date;
+    } else {
+      tDate = new Date();
+    }
+    return tDate;
+  }
+
+  notMandatoryValidPrice(o) {
+    let bl = AppConstant.VALIDATE_INPUT_BORDER.VALID;
+    const fd = this.AppConstant.VALIDATEFORM.PRICE.test(o.value);
+    if (!fd && o.value != null) {
+      bl = AppConstant.VALIDATE_INPUT_BORDER.INVALID;
+    }
+    return bl;
+  }
+
+  isValidDate(o) {
+    this.isValidInput = false;
+    let bl = AppConstant.VALIDATE_INPUT_BORDER.VALID;
+    const fd = this.AppConstant.VALIDATEFORM.DATE.test(o);
+    if (!fd) {
+      this.isValidInput = true;
+      bl = AppConstant.VALIDATE_INPUT_BORDER.INVALID;
+      this.setNewPromo();
+    }
+    return bl;
+  }
+
+  setNewPromo() {
+    console.log(this.promotions);
+    if (this.lspromotion.length === 0) {
+      const fm = this.promoFormArray.get('promotions') as FormArray;
+      console.log(this.promoForm.value);
+      // fm.push(this.fb.group(this.promoForm.value));
+      // fm.at(0).patchValue(this.promoForm.value);
+      // this.promoForm.reset();
+    }
+  }
 
   onSubmitSuccess() {
     if (!this.isEdit) {
@@ -1012,13 +1018,18 @@ export class EditProductInfoComponent implements OnInit, OnDestroy {
   }
 
   handleError(err, sumary) {
+    this.pmessageService.clear();
     this.pmessageService.add({ severity: 'error', summary: sumary, detail: err });
+  }
+
+  toCustomer() {
+    this.router.navigate(['/customer']);
   }
 }
 
 export class Promotions {
   promotions: Promotion[];
-  constructor() {
+  constructor () {
     this.promotions = [new Promotion()];
   }
 }

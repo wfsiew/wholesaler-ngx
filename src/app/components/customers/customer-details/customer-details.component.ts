@@ -15,7 +15,7 @@ export class CustomerDetailsComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private customerService: CustomerService
-  ){ }
+  ) { }
 
   ngOnInit() {
     this.loadCustomer();
